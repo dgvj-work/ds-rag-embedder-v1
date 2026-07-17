@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Git hooks — strip Cursor attribution from commits
+set -euo pipefail
+HOOKS_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$HOOKS_DIR/../.." && pwd)"
+install_hook() {
+  local name="$1"
+  install -m 755 "$HOOKS_DIR/$name" "$REPO_ROOT/.git/hooks/$name"
+}
+install_hook prepare-commit-msg
+echo "Installed git hooks in $REPO_ROOT/.git/hooks"

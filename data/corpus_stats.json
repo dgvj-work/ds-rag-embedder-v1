@@ -1,0 +1,8 @@
+{
+  "corpus_size": 80,
+  "eval_pairs": 120,
+  "benchmark_queries": 60,
+  "corpus_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/corpus/ds_ml_corpus.jsonl",
+  "eval_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/eval/ds_retrieval_eval.jsonl",
+  "benchmark_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/benchmarks/ds_rag_benchmark.jsonl"
+}

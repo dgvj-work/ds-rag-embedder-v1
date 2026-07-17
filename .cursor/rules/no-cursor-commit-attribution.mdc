@@ -1,0 +1,11 @@
+---
+description: Never attribute commits to Cursor; use Digvijay Waghela only
+alwaysApply: true
+---
+
+# Commit authorship
+
+- Author and committer must always be: Digvijay Waghela `<digvijay.vaghela@yahoo.com>`
+- Never add `Co-authored-by: Cursor`, `Made-with: Cursor`, `--trailer`, or any Cursor/agent attribution to commits or PRs
+- If the environment injects a Cursor trailer, amend immediately to remove it before pushing
+- Prefer `GIT_AUTHOR_*` / `GIT_COMMITTER_*` env vars for identity; do not change global git config unless the user asks

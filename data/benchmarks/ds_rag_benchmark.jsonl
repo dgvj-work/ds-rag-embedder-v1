@@ -1,0 +1,60 @@
+{"query": "Which metric should I use for imbalanced classification?", "relevant_ids": ["metrics_auc_vs_accuracy"], "category": "metrics"}
+{"query": "Is accuracy enough when classes are imbalanced?", "relevant_ids": ["metrics_auc_vs_accuracy"], "category": "metrics"}
+{"query": "AUC vs accuracy for skewed labels", "relevant_ids": ["metrics_auc_vs_accuracy"], "category": "metrics"}
+{"query": "How does target encoding cause data leakage?", "relevant_ids": ["leakage_target_encoding"], "category": "data_leakage"}
+{"query": "Can I target-encode before splitting data?", "relevant_ids": ["leakage_target_encoding"], "category": "data_leakage"}
+{"query": "Prevent leakage with categorical encoding", "relevant_ids": ["leakage_target_encoding"], "category": "data_leakage"}
+{"query": "What is nested cross validation?", "relevant_ids": ["cv_nested"], "category": "validation"}
+{"query": "How to tune hyperparameters without overfitting evaluation?", "relevant_ids": ["cv_nested"], "category": "validation"}
+{"query": "Unbiased model selection workflow", "relevant_ids": ["cv_nested"], "category": "validation"}
+{"query": "How to handle class imbalance in sklearn?", "relevant_ids": ["imbalance_smote"], "category": "imbalanced_data"}
+{"query": "When should I use SMOTE?", "relevant_ids": ["imbalance_smote"], "category": "imbalanced_data"}
+{"query": "Best metrics for rare positive class", "relevant_ids": ["imbalance_smote"], "category": "imbalanced_data"}
+{"query": "Do I need to scale features for XGBoost?", "relevant_ids": ["feature_scaling_tree"], "category": "feature_engineering"}
+{"query": "Which models require feature scaling?", "relevant_ids": ["feature_scaling_tree"], "category": "feature_engineering"}
+{"query": "StandardScaler in production pipelines", "relevant_ids": ["feature_scaling_tree"], "category": "feature_engineering"}
+{"query": "Random search or grid search for hyperparameters?", "relevant_ids": ["hp_random_search"], "category": "hyperparameter_tuning"}
+{"query": "Efficient hyperparameter tuning for ML models", "relevant_ids": ["hp_random_search"], "category": "hyperparameter_tuning"}
+{"query": "Use Optuna for model tuning", "relevant_ids": ["hp_random_search"], "category": "hyperparameter_tuning"}
+{"query": "What is a model registry in MLOps?", "relevant_ids": ["mlops_model_registry"], "category": "mlops"}
+{"query": "How to promote models to production safely?", "relevant_ids": ["mlops_model_registry"], "category": "mlops"}
+{"query": "MLflow model registry best practices", "relevant_ids": ["mlops_model_registry"], "category": "mlops"}
+{"query": "How to detect data drift in production?", "relevant_ids": ["drift_psi"], "category": "mlops"}
+{"query": "What PSI threshold indicates drift?", "relevant_ids": ["drift_psi"], "category": "mlops"}
+{"query": "Monitor feature drift in ML systems", "relevant_ids": ["drift_psi"], "category": "mlops"}
+{"query": "Best chunk size for RAG on technical documentation?", "relevant_ids": ["rag_chunking"], "category": "rag_llm"}
+{"query": "How to chunk ML docs for vector search?", "relevant_ids": ["rag_chunking"], "category": "rag_llm"}
+{"query": "Evaluate RAG retrieval quality", "relevant_ids": ["rag_chunking"], "category": "rag_llm"}
+{"query": "Should I fine-tune embeddings for RAG?", "relevant_ids": ["rag_embeddings_domain"], "category": "rag_llm"}
+{"query": "Domain-specific embedding models for ML docs", "relevant_ids": ["rag_embeddings_domain"], "category": "rag_llm"}
+{"query": "BGE query prefix for retrieval", "relevant_ids": ["rag_embeddings_domain"], "category": "rag_llm"}
+{"query": "Learning rate warmup for neural networks", "relevant_ids": ["dl_learning_rate"], "category": "deep_learning"}
+{"query": "Best LR scheduler for fine-tuning transformers", "relevant_ids": ["dl_learning_rate"], "category": "deep_learning"}
+{"query": "Training diverges high learning rate", "relevant_ids": ["dl_learning_rate"], "category": "deep_learning"}
+{"query": "How to do cross validation for time series?", "relevant_ids": ["ts_cross_validation"], "category": "time_series"}
+{"query": "Avoid leakage in time series ML", "relevant_ids": ["ts_cross_validation"], "category": "time_series"}
+{"query": "Expanding window validation", "relevant_ids": ["ts_cross_validation"], "category": "time_series"}
+{"query": "p-value vs practical significance in experiments", "relevant_ids": ["stats_pvalue"], "category": "statistics"}
+{"query": "How to interpret A/B test results for ML?", "relevant_ids": ["stats_pvalue"], "category": "statistics"}
+{"query": "Effect size in model experiments", "relevant_ids": ["stats_pvalue"], "category": "statistics"}
+{"query": "How to use SHAP for feature importance?", "relevant_ids": ["shap_interpret"], "category": "interpretability"}
+{"query": "Explain individual predictions with SHAP", "relevant_ids": ["shap_interpret"], "category": "interpretability"}
+{"query": "SHAP for XGBoost models", "relevant_ids": ["shap_interpret"], "category": "interpretability"}
+{"query": "Batch vs real-time ML inference architecture", "relevant_ids": ["deploy_batch_vs_online"], "category": "deployment"}
+{"query": "Training serving skew prevention", "relevant_ids": ["deploy_batch_vs_online"], "category": "deployment"}
+{"query": "Feature store for online ML serving", "relevant_ids": ["deploy_batch_vs_online"], "category": "deployment"}
+{"query": "Prevent data leakage in pandas feature engineering", "relevant_ids": ["pandas_merge_leak"], "category": "pandas_sklearn"}
+{"query": "As-of merge for time series features", "relevant_ids": ["pandas_merge_leak"], "category": "pandas_sklearn"}
+{"query": "pandas merge best practices ML", "relevant_ids": ["pandas_merge_leak"], "category": "pandas_sklearn"}
+{"query": "ML experiment tracking best practices", "relevant_ids": ["experiment_tracking"], "category": "experiment_design"}
+{"query": "What to log in MLflow runs?", "relevant_ids": ["experiment_tracking"], "category": "experiment_design"}
+{"query": "Reproducible machine learning experiments", "relevant_ids": ["experiment_tracking"], "category": "experiment_design"}
+{"query": "Baseline approach for text classification", "relevant_ids": ["nlp_text_classification"], "category": "nlp"}
+{"query": "Fine-tune transformer for small text dataset", "relevant_ids": ["nlp_text_classification"], "category": "nlp"}
+{"query": "Metrics for imbalanced text labels", "relevant_ids": ["nlp_text_classification"], "category": "nlp"}
+{"query": "How to evaluate RAG pipeline quality?", "relevant_ids": ["llm_eval_rag"], "category": "rag_llm"}
+{"query": "RAG metrics recall faithfulness", "relevant_ids": ["llm_eval_rag"], "category": "rag_llm"}
+{"query": "LLM as judge for RAG evaluation", "relevant_ids": ["llm_eval_rag"], "category": "rag_llm"}
+{"query": "Bias variance tradeoff in model selection", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
+{"query": "Diagnose overfitting with learning curves", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
+{"query": "When to use simpler ML models", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
