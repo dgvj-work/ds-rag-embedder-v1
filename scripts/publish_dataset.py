@@ -34,7 +34,7 @@ def main() -> None:
         build()
 
     try:
-        from datasets import Dataset, DatasetDict
+        from datasets import Dataset
         from huggingface_hub import HfApi
     except ImportError as exc:
         raise SystemExit("pip install datasets huggingface_hub") from exc
@@ -43,16 +43,55 @@ def main() -> None:
     eval_rows = _load_jsonl(EVAL)
     bench = _load_jsonl(BENCH)
 
-    ds = DatasetDict(
-        {
-            "corpus": Dataset.from_list(
-                [{"id": r["id"], "text": r["text"], "category": r.get("category"), "title": r.get("title")} for r in corpus]
-            ),
-            "eval_pairs": Dataset.from_list(eval_rows),
-            "benchmark": Dataset.from_list(bench),
-        }
+    api = HfApi()
+    try:
+        api.create_repo(args.repo, repo_type="dataset", private=args.private, exist_ok=True)
+    except Exception:
+        pass
+
+    # Each split has a different schema; publish as separate dataset configs.
+    corpus_ds = Dataset.from_list(
+        [
+            {
+                "id": r["id"],
+                "text": r["text"],
+                "category": r.get("category") or "",
+                "title": r.get("title") or "",
+            }
+            for r in corpus
+        ]
     )
-    ds.push_to_hub(args.repo, private=args.private)
+    eval_ds = Dataset.from_list(eval_rows)
+    bench_ds = Dataset.from_list(
+        [
+            {
+                "query": r["query"],
+                "relevant_ids": r["relevant_ids"],
+                "category": r.get("category") or "",
+            }
+            for r in bench
+        ]
+    )
+
+    print(f"Uploading corpus split ({len(corpus_ds)} rows)…")
+    corpus_ds.push_to_hub(args.repo, config_name="corpus", private=args.private)
+    print(f"Uploading eval_pairs split ({len(eval_ds)} rows)…")
+    eval_ds.push_to_hub(args.repo, config_name="eval_pairs", private=args.private)
+    print(f"Uploading benchmark split ({len(bench_ds)} rows)…")
+    bench_ds.push_to_hub(args.repo, config_name="benchmark", private=args.private)
+
+    # Also upload raw JSONL for users who prefer files over Arrow.
+    for path, dest in [
+        (CORPUS, "data/ds_ml_corpus.jsonl"),
+        (EVAL, "data/ds_retrieval_eval.jsonl"),
+        (BENCH, "data/ds_rag_benchmark.jsonl"),
+    ]:
+        api.upload_file(
+            path_or_fileobj=str(path),
+            path_in_repo=dest,
+            repo_id=args.repo,
+            repo_type="dataset",
+        )
 
     readme = f"""---
 license: apache-2.0
@@ -72,34 +111,51 @@ tags:
 size_categories:
   - n<1K
 pretty_name: DS RAG Eval v1
+configs:
+  - config_name: corpus
+    data_files:
+      - split: corpus
+        path: data/ds_ml_corpus.jsonl
+  - config_name: eval_pairs
+    data_files:
+      - split: eval_pairs
+        path: data/ds_retrieval_eval.jsonl
+  - config_name: benchmark
+    data_files:
+      - split: benchmark
+        path: data/ds_rag_benchmark.jsonl
 ---
 
 # DS RAG Eval v1
 
-Evaluation dataset for **Data Science & ML documentation retrieval** — companion to
+Evaluation dataset for **Data Science & ML documentation retrieval**, companion to
 [`waghelad/ds-rag-embedder-v1`](https://huggingface.co/waghelad/ds-rag-embedder-v1).
 
-## Splits
+## Splits (configs)
 
-| Split | Rows | Purpose |
-|-------|------|---------|
+| Config | Rows | Purpose |
+|--------|------|---------|
 | `corpus` | {len(corpus)} | Document passages for indexing |
-| `eval_pairs` | {len(eval_rows)} | Query → positive passage pairs for training/eval |
+| `eval_pairs` | {len(eval_rows)} | Query to positive passage pairs for training/eval |
 | `benchmark` | {len(bench)} | Retrieval benchmark with relevance labels |
 
 ## Usage
 
 ```python
 from datasets import load_dataset
-ds = load_dataset("{args.repo}")
-print(ds["benchmark"][0])
+
+corpus = load_dataset("{args.repo}", "corpus", split="corpus")
+eval_pairs = load_dataset("{args.repo}", "eval_pairs", split="eval_pairs")
+benchmark = load_dataset("{args.repo}", "benchmark", split="benchmark")
+print(benchmark[0])
 ```
+
+Raw JSONL files are also available under `data/`.
 
 ## Citation
 
 Digvijay Waghela (2026). DS RAG Eval v1. Hugging Face.
 """
-    api = HfApi()
     api.upload_file(
         path_or_fileobj=readme.encode("utf-8"),
         path_in_repo="README.md",
