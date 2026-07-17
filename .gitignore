@@ -11,8 +11,13 @@ htmlcov/
 dist/
 build/
 models/
-outputs/
+!published/
+outputs/*
+!outputs/eval_results.json
+!outputs/benchmark_report.md
+!outputs/benchmark_report.html
 checkpoints/
+exports/
 *.pt
 *.bin
 *.safetensors

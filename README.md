@@ -12,6 +12,8 @@ Fine-tuned from [`BAAI/bge-small-en-v1.5`](https://huggingface.co/BAAI/bge-small
 
 Built for daily use in **LangChain**, **LlamaIndex**, **Chroma**, **FAISS**, and Hugging Face TEI pipelines.
 
+**Published on Hugging Face:** [Model](https://huggingface.co/waghelad/ds-rag-embedder-v1) · [Dataset](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
+
 ---
 
 ## Why this model?
@@ -151,11 +153,11 @@ python scripts/evaluate.py --compare
 
 | Model | Recall@1 | Recall@5 | MRR | nDCG@10 |
 |-------|----------|----------|-----|---------|
-| all-MiniLM-L6-v2 | ~0.45 | ~0.72 | ~0.58 | ~0.61 |
-| bge-small-en-v1.5 | ~0.52 | ~0.78 | ~0.64 | ~0.67 |
-| **ds-rag-embedder-v1** | **~0.68** | **~0.91** | **~0.79** | **~0.82** |
+| all-MiniLM-L6-v2 | 0.621 | 0.828 | 0.708 | 0.740 |
+| bge-small-en-v1.5 | 0.506 | 0.609 | 0.558 | 0.567 |
+| **ds-rag-embedder-v1** | **0.851** | **1.000** | **0.921** | **0.942** |
 
-*Exact numbers depend on your training run; use `outputs/eval_results.json` as source of truth.*
+*Verified on DS RAG Eval v1 (87 queries). Full results: [`outputs/eval_results.json`](outputs/eval_results.json) · generated 2026-07-17.*
 
 Dataset: [`waghelad/ds-rag-eval-v1`](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1) (87 benchmark queries, 658 eval pairs)
 

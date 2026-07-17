@@ -1,0 +1,12 @@
+{
+  "base_model": "BAAI/bge-small-en-v1.5",
+  "train_pairs": 675,
+  "corpus_size": 600,
+  "eval_pairs": 658,
+  "benchmark_queries": 87,
+  "epochs": 4,
+  "hf_model_repo": "waghelad/ds-rag-embedder-v1",
+  "hf_dataset_repo": "waghelad/ds-rag-eval-v1",
+  "hf_model_commit": "fda3162a1fb08d7d96eb3eaf952061e1303cd98f",
+  "eval_generated_at": "2026-07-17T23:48:05.329581+00:00"
+}

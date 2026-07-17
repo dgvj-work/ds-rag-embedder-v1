@@ -19,7 +19,7 @@ from ds_rag_embedder.model import DSRAGEmbedder
 def _write_model_card(dest: Path, metrics: dict | None = None) -> None:
     card_src = ROOT / "MODEL_CARD.md"
     content = card_src.read_text(encoding="utf-8")
-    if metrics:
+    if metrics and "## Latest evaluation" not in content:
         content += "\n\n## Latest evaluation\n\n```json\n"
         content += json.dumps(metrics, indent=2)
         content += "\n```\n"

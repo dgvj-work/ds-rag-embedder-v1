@@ -44,12 +44,14 @@ hf upload waghelad/ds-rag-embedder-demo . --repo-type=space
 
 ## Checklist before publish
 
-- [ ] Model is **public**
-- [ ] Dataset is **public** and linked in model card
-- [ ] Model card has query prefix documented
+- [x] Model is **public** — https://huggingface.co/waghelad/ds-rag-embedder-v1
+- [x] Dataset is **public** and linked in model card — https://huggingface.co/datasets/waghelad/ds-rag-eval-v1
+- [x] Model card has query prefix documented
 - [ ] Space builds and retrieves example queries
 - [ ] Pin Space on profile
 - [ ] HF Community post announcing launch
+
+See [`published/HF_PUBLISH.md`](../published/HF_PUBLISH.md) for publish commit hash and benchmark results synced with GitHub.
 
 ## Download optimization tips
 
