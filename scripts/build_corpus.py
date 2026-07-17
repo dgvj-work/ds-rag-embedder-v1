@@ -76,7 +76,7 @@ PASSAGES: list[dict] = [
         "title": "Handling class imbalance with SMOTE and class weights",
         "text": (
             "For rare positive classes, try class weights, threshold tuning, or oversampling "
-            "like SMOTE — but apply SMOTE only on training folds to avoid leakage. "
+            "like SMOTE, but apply SMOTE only on training folds to avoid leakage. "
             "Prefer PR-AUC over ROC-AUC when positives are rare. Consider cost-sensitive "
             "learning if false negatives are expensive."
         ),
@@ -92,7 +92,7 @@ PASSAGES: list[dict] = [
         "title": "When feature scaling matters",
         "text": (
             "Tree-based models (RandomForest, XGBoost, LightGBM) are scale-invariant. "
-            "Linear models, SVMs, k-NN, and neural nets require scaling — typically "
+            "Linear models, SVMs, k-NN, and neural nets require scaling; typically "
             "StandardScaler or RobustScaler for heavy tails. Fit scalers on training data "
             "only and persist them in inference pipelines."
         ),
@@ -158,7 +158,7 @@ PASSAGES: list[dict] = [
             "For DS/ML docs, use semantic or structure-aware chunking: split on headings, "
             "keep code blocks intact, and use 300–800 token chunks with 10–20% overlap. "
             "Store metadata (section, library, task) for hybrid search. Evaluate retrieval "
-            "with Recall@k and nDCG on domain-specific query sets — generic benchmarks "
+            "with Recall@k and nDCG on domain-specific query sets; generic benchmarks "
             "understate production quality."
         ),
         "queries": [
@@ -204,7 +204,7 @@ PASSAGES: list[dict] = [
         "category": "time_series",
         "title": "Time series cross-validation",
         "text": (
-            "Never shuffle time series for CV — use expanding or sliding window splits "
+            "Never shuffle time series for CV; use expanding or sliding window splits "
             "to respect temporal order. Purged cross-validation removes overlapping labels "
             "in finance-style problems. Report metrics per fold and on the most recent "
             "holdout window to mimic production forecasting."
@@ -239,7 +239,7 @@ PASSAGES: list[dict] = [
             "SHAP explains individual predictions via Shapley values. TreeExplainer is fast "
             "for tree models; KernelExplainer works broadly but is slower. Use SHAP summary "
             "plots for global importance and force plots for single predictions. "
-            "Correlated features can make SHAP attributions unstable — check robustness."
+            "Correlated features can make SHAP attributions unstable; check robustness."
         ),
         "queries": [
             "How to use SHAP for feature importance?",
@@ -269,7 +269,7 @@ PASSAGES: list[dict] = [
         "title": "Merge hygiene in pandas feature pipelines",
         "text": (
             "When building features with pandas merges, verify join keys, cardinality, and "
-            "timestamps — as-of merges prevent future data leakage. After merges, check for "
+            "timestamps; as-of merges prevent future data leakage. After merges, check for "
             "duplicate rows and null rate spikes. Persist merge logic in reproducible "
             "pipeline steps, not notebook-only cells."
         ),
@@ -335,12 +335,152 @@ PASSAGES: list[dict] = [
             "High bias (underfitting): increase model capacity or features. High variance "
             "(overfitting): regularization, more data, simpler models, or ensembling. "
             "Learning curves diagnose data vs algorithm limits. Prefer simpler models that "
-            "meet business metrics — complexity increases maintenance and drift risk."
+            "meet business metrics; complexity increases maintenance and drift risk."
         ),
         "queries": [
             "Bias variance tradeoff in model selection",
             "Diagnose overfitting with learning curves",
             "When to use simpler ML models",
+        ],
+    },
+    {
+        "id": "lora_finetuning",
+        "category": "deep_learning",
+        "title": "LoRA for efficient LLM fine-tuning",
+        "text": (
+            "Low-Rank Adaptation (LoRA) fine-tunes small adapter matrices instead of full "
+            "weights, cutting GPU memory and training time. Use rank 8-64, tune learning rate "
+            "separately for adapters vs base, and evaluate on a held-out task set. LoRA is "
+            "ideal when you have limited labels but need domain adaptation for RAG or codegen."
+        ),
+        "queries": [
+            "What is LoRA fine-tuning?",
+            "How to fine-tune LLM with limited GPU memory?",
+            "LoRA rank selection best practices",
+        ],
+    },
+    {
+        "id": "feature_store",
+        "category": "mlops",
+        "title": "Feature stores for training and serving consistency",
+        "text": (
+            "A feature store provides point-in-time correct features for training and low-latency "
+            "serving. Define entities, feature views, and freshness SLAs. Prevent training-serving "
+            "skew by reusing the same transformation logic online and offline. Monitor null rates "
+            "and drift on store-backed features."
+        ),
+        "queries": [
+            "What is a feature store in ML?",
+            "Prevent training serving skew with feature store",
+            "Point in time correct features",
+        ],
+    },
+    {
+        "id": "vector_db_rag",
+        "category": "rag_llm",
+        "title": "Vector databases for production RAG",
+        "text": (
+            "At scale, store embeddings in a vector database (Chroma, Pinecone, Weaviate, pgvector) "
+            "with metadata filters for team, project, and document type. Refresh indexes on a schedule "
+            "or on document change events. Track Recall@k on logged queries and add hybrid BM25+dense "
+            "retrieval when exact terminology matters."
+        ),
+        "queries": [
+            "Best vector database for RAG?",
+            "How to scale RAG retrieval in production?",
+            "Hybrid search BM25 and embeddings",
+        ],
+    },
+    {
+        "id": "calibration",
+        "category": "metrics",
+        "title": "Probability calibration for classifiers",
+        "text": (
+            "Models with strong AUC can still produce miscalibrated probabilities. Apply "
+            "Platt scaling or isotonic regression on a validation fold. Report Brier score and "
+            "reliability diagrams. Calibration matters when thresholds drive business actions."
+        ),
+        "queries": [
+            "How to calibrate classifier probabilities?",
+            "Platt scaling vs isotonic regression",
+            "Brier score for model evaluation",
+        ],
+    },
+    {
+        "id": "anomaly_detection",
+        "category": "model_selection",
+        "title": "Anomaly detection evaluation",
+        "text": (
+            "Anomaly detection is usually imbalanced. Prefer precision-recall and PR-AUC over "
+            "accuracy. Establish a baseline with isolation forest or robust z-scores before deep "
+            "models. Validate on time-based splits when anomalies may drift seasonally."
+        ),
+        "queries": [
+            "Metrics for anomaly detection models?",
+            "Isolation forest baseline for outliers",
+            "Evaluate rare event detection",
+        ],
+    },
+    {
+        "id": "clustering_metrics",
+        "category": "metrics",
+        "title": "Evaluating clustering quality",
+        "text": (
+            "Internal metrics (silhouette) are convenient but can mislead on high dimensions. "
+            "When labels exist, use NMI or ARI. For production segmentation, validate cluster "
+            "stability over time and business interpretability, not only statistical scores."
+        ),
+        "queries": [
+            "How to evaluate clustering results?",
+            "Silhouette score limitations",
+            "Cluster stability over time",
+        ],
+    },
+    {
+        "id": "prompt_engineering_ml",
+        "category": "rag_llm",
+        "title": "Prompt design for ML copilots",
+        "text": (
+            "Structure prompts with role, constraints, retrieved context blocks, and explicit "
+            "output format. Tell the model to cite context IDs and refuse when evidence is missing. "
+            "Log prompts and retrieval hits for offline eval. Few-shot examples improve formatting "
+            "consistency for DS workflows."
+        ),
+        "queries": [
+            "Prompt engineering for RAG copilots",
+            "How to reduce hallucinations in ML assistant?",
+            "Structure LLM prompts with retrieved context",
+        ],
+    },
+    {
+        "id": "gpu_memory",
+        "category": "deep_learning",
+        "title": "GPU memory optimization for training",
+        "text": (
+            "Reduce batch size, enable gradient checkpointing, use mixed precision, and gradient "
+            "accumulation to simulate larger batches. For inference, quantize weights (INT8/INT4) "
+            "when latency and memory dominate. Profile with torch.cuda.max_memory_allocated."
+        ),
+        "queries": [
+            "Reduce GPU memory usage during fine-tuning",
+            "Gradient checkpointing transformers",
+            "Mixed precision training best practices",
+        ],
+    },
+    {
+        "id": "dbt_ml_features",
+        "category": "feature_engineering",
+        "title": "dbt for ML feature pipelines",
+        "text": (
+            "Use dbt to define reusable feature transformations with tests on uniqueness, "
+            "freshness, and accepted values. Materialize staging and mart tables consumed by "
+            "training jobs. Version schemas and document lineage so data scientists trust features "
+            "used in production models."
+        ),
+        "queries": [
+            "Use dbt for machine learning features",
+            "Data quality tests for ML feature tables",
+            "dbt lineage for model features",
         ],
     },
 ]

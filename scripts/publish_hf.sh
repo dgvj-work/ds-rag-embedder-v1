@@ -42,8 +42,8 @@ else
   echo "  Using existing models/ds-rag-embedder-v1"
 fi
 
-echo "Step 3/5 — Evaluate…"
-python scripts/evaluate.py --model models/ds-rag-embedder-v1 --compare || true
+echo "Step 3/5 — Evaluate and generate report…"
+python scripts/benchmark_report.py --model models/ds-rag-embedder-v1 || python scripts/evaluate.py --compare || true
 
 echo "Step 4/5 — Export + upload model…"
 python scripts/export_hf.py

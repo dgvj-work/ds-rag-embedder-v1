@@ -58,3 +58,30 @@
 {"query": "Bias variance tradeoff in model selection", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
 {"query": "Diagnose overfitting with learning curves", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
 {"query": "When to use simpler ML models", "relevant_ids": ["model_selection_bias_variance"], "category": "model_selection"}
+{"query": "What is LoRA fine-tuning?", "relevant_ids": ["lora_finetuning"], "category": "deep_learning"}
+{"query": "How to fine-tune LLM with limited GPU memory?", "relevant_ids": ["lora_finetuning"], "category": "deep_learning"}
+{"query": "LoRA rank selection best practices", "relevant_ids": ["lora_finetuning"], "category": "deep_learning"}
+{"query": "What is a feature store in ML?", "relevant_ids": ["feature_store"], "category": "mlops"}
+{"query": "Prevent training serving skew with feature store", "relevant_ids": ["feature_store"], "category": "mlops"}
+{"query": "Point in time correct features", "relevant_ids": ["feature_store"], "category": "mlops"}
+{"query": "Best vector database for RAG?", "relevant_ids": ["vector_db_rag"], "category": "rag_llm"}
+{"query": "How to scale RAG retrieval in production?", "relevant_ids": ["vector_db_rag"], "category": "rag_llm"}
+{"query": "Hybrid search BM25 and embeddings", "relevant_ids": ["vector_db_rag"], "category": "rag_llm"}
+{"query": "How to calibrate classifier probabilities?", "relevant_ids": ["calibration"], "category": "metrics"}
+{"query": "Platt scaling vs isotonic regression", "relevant_ids": ["calibration"], "category": "metrics"}
+{"query": "Brier score for model evaluation", "relevant_ids": ["calibration"], "category": "metrics"}
+{"query": "Metrics for anomaly detection models?", "relevant_ids": ["anomaly_detection"], "category": "model_selection"}
+{"query": "Isolation forest baseline for outliers", "relevant_ids": ["anomaly_detection"], "category": "model_selection"}
+{"query": "Evaluate rare event detection", "relevant_ids": ["anomaly_detection"], "category": "model_selection"}
+{"query": "How to evaluate clustering results?", "relevant_ids": ["clustering_metrics"], "category": "metrics"}
+{"query": "Silhouette score limitations", "relevant_ids": ["clustering_metrics"], "category": "metrics"}
+{"query": "Cluster stability over time", "relevant_ids": ["clustering_metrics"], "category": "metrics"}
+{"query": "Prompt engineering for RAG copilots", "relevant_ids": ["prompt_engineering_ml"], "category": "rag_llm"}
+{"query": "How to reduce hallucinations in ML assistant?", "relevant_ids": ["prompt_engineering_ml"], "category": "rag_llm"}
+{"query": "Structure LLM prompts with retrieved context", "relevant_ids": ["prompt_engineering_ml"], "category": "rag_llm"}
+{"query": "Reduce GPU memory usage during fine-tuning", "relevant_ids": ["gpu_memory"], "category": "deep_learning"}
+{"query": "Gradient checkpointing transformers", "relevant_ids": ["gpu_memory"], "category": "deep_learning"}
+{"query": "Mixed precision training best practices", "relevant_ids": ["gpu_memory"], "category": "deep_learning"}
+{"query": "Use dbt for machine learning features", "relevant_ids": ["dbt_ml_features"], "category": "feature_engineering"}
+{"query": "Data quality tests for ML feature tables", "relevant_ids": ["dbt_ml_features"], "category": "feature_engineering"}
+{"query": "dbt lineage for model features", "relevant_ids": ["dbt_ml_features"], "category": "feature_engineering"}

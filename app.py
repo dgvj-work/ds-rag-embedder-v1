@@ -84,6 +84,33 @@ def search(query: str, top_k: int = 5) -> tuple[str, str]:
     return "\n".join(lines), "\n".join(prompt_lines)
 
 
+def hybrid_search(query: str, top_k: int = 5, alpha: float = 0.65) -> str:
+    if not query.strip():
+        return "Enter a query."
+    from ds_rag_embedder.rag import HybridRetriever
+    import json
+
+    embedder, model_name = _load_embedder()
+    rows = []
+    with CORPUS_PATH.open(encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                rows.append(json.loads(line))
+    texts = [r["text"] for r in rows]
+    meta = [{"category": r.get("category"), "title": r.get("title")} for r in rows]
+    retriever = HybridRetriever(embedder=embedder, documents=texts, metadata=meta, alpha=alpha)
+    result = retriever.retrieve(query.strip(), top_k=int(top_k))
+    lines = [f"**Hybrid retrieval** (alpha={alpha}) · model `{model_name}`\n"]
+    for hit in result.hits:
+        cat = (hit.get("metadata") or {}).get("category", "general")
+        lines.append(
+            f"### #{hit['rank']} · combined {hit['score']:.4f} "
+            f"(dense {hit['dense_score']:.3f}, bm25 {hit['bm25_score']:.3f}) · `{cat}`\n"
+            f"{hit['text']}\n"
+        )
+    return "\n".join(lines)
+
+
 def compare_query(query: str) -> str:
     """Side-by-side generic vs DS embedder (when both available)."""
     from ds_rag_embedder.model import DSRAGEmbedder
@@ -108,13 +135,13 @@ def compare_query(query: str) -> str:
             top = emb.search(query, texts, top_k=1)[0]
             lines.append(f"**{name}** → score {top['score']:.4f}\n> {top['document'][:220]}…\n")
         except Exception as exc:
-            lines.append(f"**{name}** — unavailable ({exc})\n")
+            lines.append(f"**{name}**: unavailable ({exc})\n")
     try:
         emb = DSRAGEmbedder(model_name_or_path=MODEL_ID)
         top = emb.search(query, texts, top_k=1)[0]
         lines.append(f"**DS RAG Embedder** → score {top['score']:.4f}\n> {top['document'][:220]}…\n")
     except Exception:
-        lines.append("**DS RAG Embedder** — upload model to HF or train locally first.\n")
+        lines.append("**DS RAG Embedder**: upload model to HF or train locally first.\n")
     return "\n".join(lines)
 
 
@@ -125,7 +152,7 @@ with gr.Blocks(title="DS RAG Embedder Demo", theme=gr.themes.Soft()) as demo:
 **Domain-specific embeddings for Data Science & ML documentation retrieval**
 
 Retrieve notebook guidance, metrics explainers, MLOps runbooks, and RAG best practices.
-Built for daily RAG pipelines — LangChain · LlamaIndex · Chroma · FAISS compatible.
+Built for daily RAG pipelines: LangChain, LlamaIndex, Chroma, FAISS compatible.
 
 **Model:** [`waghelad/ds-rag-embedder-v1`](https://huggingface.co/waghelad/ds-rag-embedder-v1)
 """
@@ -144,6 +171,14 @@ Built for daily RAG pipelines — LangChain · LlamaIndex · Chroma · FAISS com
         gr.Examples(EXAMPLE_QUERIES, inputs=query_in)
         search_btn.click(search, [query_in, top_k], [results_md, prompt_out])
         query_in.submit(search, [query_in, top_k], [results_md, prompt_out])
+
+    with gr.Tab("Hybrid search"):
+        h_query = gr.Textbox(label="Query", lines=2)
+        h_alpha = gr.Slider(0.0, 1.0, value=0.65, step=0.05, label="Dense weight (alpha)")
+        h_top_k = gr.Slider(1, 10, value=5, step=1, label="Top-K")
+        h_btn = gr.Button("Hybrid retrieve", variant="primary")
+        h_out = gr.Markdown()
+        h_btn.click(hybrid_search, [h_query, h_top_k, h_alpha], h_out)
 
     with gr.Tab("Compare embedders"):
         cmp_query = gr.Textbox(label="Query", lines=2)

@@ -19,29 +19,30 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate DS RAG embedder")
     parser.add_argument("--model", default="models/ds-rag-embedder-v1")
     parser.add_argument("--compare", action="store_true", help="Compare with generic baselines")
+    parser.add_argument("--categories", action="store_true")
     parser.add_argument("--output", default="outputs/eval_results.json")
     args = parser.parse_args()
 
-    results = {}
-    model_path = Path(args.model)
-    if model_path.exists():
-        embedder = DSRAGEmbedder(model_name_or_path=str(model_path))
-        results["ds-rag-embedder-v1"] = evaluate_retrieval(embedder).to_dict()
-    else:
-        print(f"Warning: {model_path} not found — evaluating base model for smoke test")
-        embedder = DSRAGEmbedder(model_name_or_path="BAAI/bge-small-en-v1.5")
-        results["bge-small-base"] = evaluate_retrieval(embedder).to_dict()
-
     if args.compare:
-        baselines = compare_models(
-            {
-                "all-MiniLM-L6-v2": "sentence-transformers/all-MiniLM-L6-v2",
-                "bge-small-en-v1.5": "BAAI/bge-small-en-v1.5",
-            }
+        models = {
+            "all-MiniLM-L6-v2": "sentence-transformers/all-MiniLM-L6-v2",
+            "bge-small-en-v1.5": "BAAI/bge-small-en-v1.5",
+        }
+        if Path(args.model).exists():
+            models["ds-rag-embedder-v1"] = args.model
+        results = compare_models(models, include_categories=args.categories)
+    else:
+        embedder = DSRAGEmbedder(
+            model_name_or_path=str(args.model)
+            if Path(args.model).exists()
+            else "BAAI/bge-small-en-v1.5"
         )
-        if model_path.exists():
-            baselines["ds-rag-embedder-v1"] = results["ds-rag-embedder-v1"]
-        results = baselines
+        if args.categories:
+            from ds_rag_embedder.evaluate import evaluate_by_category
+
+            results = evaluate_by_category(embedder).to_dict()
+        else:
+            results = evaluate_retrieval(embedder, measure_latency=True).to_dict()
 
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)

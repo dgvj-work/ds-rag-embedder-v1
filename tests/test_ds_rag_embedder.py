@@ -76,6 +76,31 @@ def test_rag_pipeline_prompt():
     assert len(out.contexts) >= 1
 
 
+def test_hybrid_retriever():
+    from ds_rag_embedder.rag import HybridRetriever
+
+    embedder = _mini_embedder()
+    docs = [
+        "Apply SMOTE on training folds only to avoid leakage.",
+        "Use nested cross-validation for hyperparameter tuning.",
+        "PSI above 0.25 indicates drift.",
+    ]
+    hybrid = HybridRetriever(embedder=embedder, documents=docs, alpha=0.65)
+    result = hybrid.retrieve("SMOTE leakage", top_k=2)
+    assert len(result.hits) == 2
+    assert result.hits[0]["score"] >= result.hits[1]["score"]
+
+
+def test_evaluate_by_category():
+    from scripts.build_corpus import build
+    from ds_rag_embedder.evaluate import evaluate_by_category
+
+    build(corpus_size=80, seed=4)
+    report = evaluate_by_category(_mini_embedder())
+    assert report.overall.num_queries > 0
+    assert len(report.by_category) > 0
+
+
 def test_training_examples():
     from scripts.build_corpus import build
     from ds_rag_embedder.train import build_training_examples

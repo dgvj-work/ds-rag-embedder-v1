@@ -126,7 +126,10 @@ chmod +x scripts/run_local.sh
 
 ## Features
 
-- **Fine-tuned embedder:** domain adaptation on 600+ DS/ML passages
+- **Hybrid retrieval:** BM25 + dense for production-grade search (SMOTE, PSI, AUC tokens)
+- **Benchmark report:** HTML/Markdown/JSON via `scripts/benchmark_report.py`
+- **Category eval:** Per-topic Recall@k breakdown (metrics, MLOps, RAG, etc.)
+- **Fine-tuned embedder:** domain adaptation on 600+ DS/ML passages (29 curated + expansion)
 - **Eval benchmark:** Recall@k, MRR, nDCG on curated DS retrieval queries
 - **RAG toolkit:** chunker, retriever, pipeline, LLM-ready prompts
 - **Framework adapters:** LangChain, LlamaIndex wrappers
@@ -154,7 +157,37 @@ python scripts/evaluate.py --compare
 
 *Exact numbers depend on your training run; use `outputs/eval_results.json` as source of truth.*
 
-Dataset: [`waghelad/ds-rag-eval-v1`](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
+Dataset: [`waghelad/ds-rag-eval-v1`](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1) (87 benchmark queries, 658 eval pairs)
+
+Generate a verified report after training:
+
+```bash
+python scripts/benchmark_report.py --model models/ds-rag-embedder-v1
+open outputs/benchmark_report.html
+```
+
+See [`docs/BENCHMARK.md`](docs/BENCHMARK.md) for methodology.
+
+---
+
+## Hybrid retrieval (BM25 + dense)
+
+Exact DS tokens (SMOTE, PSI, AUC) plus semantic paraphrases:
+
+```python
+from ds_rag_embedder.rag import HybridRetriever
+
+hybrid = HybridRetriever(embedder=embedder, documents=documents, alpha=0.65)
+hits = hybrid.retrieve("SMOTE leakage cross validation", top_k=5).hits
+```
+
+Example: [`examples/hybrid_retrieval_example.py`](examples/hybrid_retrieval_example.py)
+
+---
+
+## Adoption guide
+
+Swap MiniLM/BGE in existing RAG stacks: [`docs/ADOPTION.md`](docs/ADOPTION.md)
 
 ---
 
@@ -217,6 +250,7 @@ Tabs: **Retrieve** · **Compare embedders** · **Quick start**
 | LlamaIndex | [`examples/llama_index_example.py`](examples/llama_index_example.py) |
 | ChromaDB | [`examples/chromadb_example.py`](examples/chromadb_example.py) |
 | FAISS | [`examples/faiss_example.py`](examples/faiss_example.py) |
+| Hybrid BM25+dense | [`examples/hybrid_retrieval_example.py`](examples/hybrid_retrieval_example.py) |
 
 Guide: [`docs/RAG_INTEGRATION.md`](docs/RAG_INTEGRATION.md)
 
@@ -279,6 +313,8 @@ ds-rag-embedder-v1/
 | [HF_UPLOAD.md](docs/HF_UPLOAD.md) | Hugging Face model/dataset/Space upload |
 | [KAGGLE.md](docs/KAGGLE.md) | Kaggle notebook publishing |
 | [RAG_INTEGRATION.md](docs/RAG_INTEGRATION.md) | Production RAG integration patterns |
+| [ADOPTION.md](docs/ADOPTION.md) | Swap generic embedders in 5 minutes |
+| [BENCHMARK.md](docs/BENCHMARK.md) | Benchmark methodology and reproduction |
 | [MODEL_CARD.md](MODEL_CARD.md) | Hugging Face model card |
 
 ---

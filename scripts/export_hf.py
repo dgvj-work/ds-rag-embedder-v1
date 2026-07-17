@@ -54,6 +54,12 @@ def main() -> None:
         "sentence_transformers": True,
         "pooling_mode": "mean",
         "embedding_dimension": DEFAULT_CONFIG.embedding_dim,
+        "prompts": {
+            "query": DEFAULT_CONFIG.query_prefix.rstrip(),
+            "document": "",
+        },
+        "similarity_fn_name": "cosine",
+        "domain": "data-science-ml-rag",
     }
     (export_dir / "config_sentence_transformers.json").write_text(
         json.dumps(config_meta, indent=2), encoding="utf-8"
