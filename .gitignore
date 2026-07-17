@@ -17,6 +17,7 @@ checkpoints/
 *.bin
 *.safetensors
 .DS_Store
+.cursor/
 .env
 *.log
 wandb/
