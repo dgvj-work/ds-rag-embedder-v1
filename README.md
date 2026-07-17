@@ -365,6 +365,15 @@ Train and evaluate on Kaggle GPU:
 
 ---
 
-## Author
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| `401` / model download fails | Run `hf auth logout` then retry, or `hf auth login --force` with a valid token |
+| Training fails on `accelerate` | `pip install 'accelerate>=1.1.0'` (included in requirements.txt) |
+| Gradio theme warning | Pass `theme=` to `demo.launch()` (already set in `app.py`) |
+| `./scripts/run_local.sh` encode skip | Usually invalid HF token; logout fixes public model downloads |
+
+---
 
 **Digvijay Waghela** · digvijay.vaghela@yahoo.com · [GitHub](https://github.com/dgvj-work) · Apache-2.0

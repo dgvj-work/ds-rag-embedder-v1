@@ -145,7 +145,7 @@ def compare_query(query: str) -> str:
     return "\n".join(lines)
 
 
-with gr.Blocks(title="DS RAG Embedder Demo", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="DS RAG Embedder Demo") as demo:
     gr.Markdown(
         """
 # 🔬 DS RAG Embedder v1
@@ -209,4 +209,4 @@ Author: **Digvijay Waghela** · Apache-2.0
         )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(theme=gr.themes.Soft())
