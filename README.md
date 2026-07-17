@@ -1,5 +1,6 @@
 # DS RAG Embedder v1
 
+[![GitHub](https://img.shields.io/badge/GitHub-dgvj--work%2Fds--rag--embedder--v1-blue)](https://github.com/dgvj-work/ds-rag-embedder-v1)
 [![Model](https://img.shields.io/badge/🤗%20Model-ds--rag--embedder--v1-blue)](https://huggingface.co/waghelad/ds-rag-embedder-v1)
 [![Dataset](https://img.shields.io/badge/🤗%20Dataset-ds--rag--eval--v1-blue)](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)

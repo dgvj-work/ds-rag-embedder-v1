@@ -46,7 +46,7 @@ ds-rag-embed = "ds_rag_embedder.cli:main"
 
 [project.urls]
 Homepage = "https://huggingface.co/waghelad/ds-rag-embedder-v1"
-Repository = "https://github.com/waghelad/ds-rag-embedder-v1"
+Repository = "https://github.com/dgvj-work/ds-rag-embedder-v1"
 Documentation = "https://huggingface.co/waghelad/ds-rag-embedder-v1"
 
 [tool.setuptools.packages.find]
