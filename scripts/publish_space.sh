@@ -23,10 +23,11 @@ hf repo create "$SPACE_ID" --repo-type space --space_sdk gradio --private false 
 # App code, package, corpus for demo, and dependencies
 hf upload "$SPACE_ID" . --repo-type=space \
   --include "app.py" \
-  --include "requirements.txt" \
-  --include "pyproject.toml" \
   --include "ds_rag_embedder/**" \
   --include "data/corpus/**"
+
+# Space requirements (no editable "." install — HF Docker build cannot pip install ".")
+hf upload "$SPACE_ID" requirements-space.txt requirements.txt --repo-type=space
 
 # Space README with YAML frontmatter
 hf upload "$SPACE_ID" README_HF_SPACE.md README.md --repo-type=space

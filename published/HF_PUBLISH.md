@@ -47,6 +47,7 @@ GitHub files that must match Hugging Face:
 | `data/*` corpus/eval/benchmark | Dataset repo configs + `data/*.jsonl` |
 | `scripts/publish_dataset.py` | Dataset upload logic |
 | `scripts/publish_space.sh` | Space upload (app.py, package, corpus, README) |
+| `requirements-space.txt` | Space `requirements.txt` (runtime deps only, no editable install) |
 
 To re-export model card from repo source:
 
