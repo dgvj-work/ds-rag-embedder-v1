@@ -375,7 +375,7 @@ Train and evaluate on Kaggle GPU:
 |-------|-----|
 | `401` / model download fails | Run `hf auth logout` then retry, or `hf auth login --force` with a valid token |
 | Training fails on `accelerate` | `pip install 'accelerate>=1.1.0'` (included in requirements.txt) |
-| Gradio theme warning | Set `theme=` on `gr.Blocks(...)` for Gradio 4.44 Spaces |
+| Gradio theme warning | Set `theme=` on `gr.Blocks(...)`; Space uses Gradio SDK 5.12 via `README_HF_SPACE.md` |
 | `./scripts/run_local.sh` encode skip | Usually invalid HF token; logout fixes public model downloads |
 
 ---

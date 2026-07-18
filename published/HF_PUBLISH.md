@@ -8,7 +8,7 @@ This folder documents the published Hugging Face artifacts and keeps GitHub in s
 |-------|-----|--------|
 | Model | https://huggingface.co/waghelad/ds-rag-embedder-v1 | Published |
 | Dataset | https://huggingface.co/datasets/waghelad/ds-rag-eval-v1 | Published |
-| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Running — commit `ef4a1bb` (hub `<0.26`, Gradio 4.44 theme on Blocks) |
+| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Gradio SDK 5.12 — sync via `scripts/publish_space.sh` |
 
 ## Model publish commit (HF)
 
