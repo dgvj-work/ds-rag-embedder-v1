@@ -112,7 +112,7 @@ def hybrid_search(query: str, top_k: int = 5, alpha: float = 0.65) -> str:
 
 
 def compare_query(query: str) -> str:
-    """Side-by-side generic vs DS embedder (when both available)."""
+    """Compare DS embedder vs BGE base on the bundled corpus (Space-safe: 2 models max)."""
     from ds_rag_embedder.model import DSRAGEmbedder
 
     if not query.strip() or not CORPUS_PATH.exists():
@@ -127,8 +127,8 @@ def compare_query(query: str) -> str:
     texts = [d["text"] for d in docs[:200]]
     lines = [f"**Query:** {query}\n"]
     for name, mid in [
-        ("Generic MiniLM", "sentence-transformers/all-MiniLM-L6-v2"),
-        ("BGE small", "BAAI/bge-small-en-v1.5"),
+        ("BGE small (base)", "BAAI/bge-small-en-v1.5"),
+        ("DS RAG Embedder v1", MODEL_ID),
     ]:
         try:
             emb = DSRAGEmbedder(model_name_or_path=mid)
@@ -136,12 +136,6 @@ def compare_query(query: str) -> str:
             lines.append(f"**{name}** → score {top['score']:.4f}\n> {top['document'][:220]}…\n")
         except Exception as exc:
             lines.append(f"**{name}**: unavailable ({exc})\n")
-    try:
-        emb = DSRAGEmbedder(model_name_or_path=MODEL_ID)
-        top = emb.search(query, texts, top_k=1)[0]
-        lines.append(f"**DS RAG Embedder** → score {top['score']:.4f}\n> {top['document'][:220]}…\n")
-    except Exception:
-        lines.append("**DS RAG Embedder**: upload model to HF or train locally first.\n")
     return "\n".join(lines)
 
 

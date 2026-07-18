@@ -1,4 +1,7 @@
-# Hugging Face Space runtime deps (no editable install — ds_rag_embedder/ is on PYTHONPATH)
+# Hugging Face Space runtime deps
+# - No editable "." install (ds_rag_embedder/ is on PYTHONPATH)
+# - Gradio is installed by the Space SDK (README sdk_version); do not pin it here
+# - huggingface_hub>=0.26 removed HfFolder, which breaks Gradio 4.44 oauth imports
 sentence-transformers>=3.0
 transformers>=4.40
 torch>=2.1
@@ -6,9 +9,8 @@ accelerate>=1.1.0
 numpy>=1.24
 pandas>=2.0
 scikit-learn>=1.3
-huggingface_hub>=0.23
+huggingface_hub>=0.23.0,<0.26.0
 datasets>=2.19
 tqdm>=4.66
 pyyaml>=6.0
-gradio>=4.44
 plotly>=5.22
