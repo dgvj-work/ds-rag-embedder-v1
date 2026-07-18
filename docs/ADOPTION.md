@@ -48,6 +48,9 @@ See `examples/hybrid_retrieval_example.py`.
 1. Run `python scripts/benchmark_report.py` on your corpus sample
 2. Log Recall@5 on live queries for 2 weeks
 3. Pin HF model + dataset + Space on your profile
+4. Share launch post: https://huggingface.co/waghelad/ds-rag-embedder-v1/discussions/1
+5. Publish Kaggle notebook: `./scripts/publish_kaggle.sh`
+6. Publish PyPI package: `./scripts/publish_pypi.sh`
 4. Add model card link to internal runbooks
 
 ## Launch channels

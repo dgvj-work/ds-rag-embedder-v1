@@ -4,6 +4,8 @@
 [![Model](https://img.shields.io/badge/🤗%20Model-ds--rag--embedder--v1-blue)](https://huggingface.co/waghelad/ds-rag-embedder-v1)
 [![Dataset](https://img.shields.io/badge/🤗%20Dataset-ds--rag--eval--v1-blue)](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
 [![Space](https://img.shields.io/badge/🤗%20Space-ds--rag--embedder--demo-blue)](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo)
+[![PyPI](https://img.shields.io/pypi/v/ds-rag-embedder?label=PyPI)](https://pypi.org/project/ds-rag-embedder/)
+[![Kaggle](https://img.shields.io/badge/Kaggle-Train%20%26%20Benchmark-blue)](https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark)
 [![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](https://github.com/dgvj-work/ds-rag-embedder-v1/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
@@ -103,6 +105,10 @@ The `DSRAGEmbedder.encode_queries()` helper applies the prefix automatically.
 ## Installation
 
 ```bash
+# From PyPI (recommended)
+pip install ds-rag-embedder sentence-transformers
+
+# From source (training / scripts)
 git clone https://github.com/dgvj-work/ds-rag-embedder-v1.git
 cd ds-rag-embedder-v1
 

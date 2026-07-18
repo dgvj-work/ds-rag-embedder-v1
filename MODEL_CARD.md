@@ -131,7 +131,9 @@ Not for general web search, legal/medical use without evaluation, or fully autom
 - GitHub: https://github.com/dgvj-work/ds-rag-embedder-v1
 - Dataset: https://huggingface.co/datasets/waghelad/ds-rag-eval-v1
 - Demo Space: https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo
-- Kaggle notebook: `notebooks/kaggle_ds_rag_embedder.ipynb`
+- Launch post: https://huggingface.co/waghelad/ds-rag-embedder-v1/discussions/1
+- PyPI: https://pypi.org/project/ds-rag-embedder/
+- Kaggle notebook: https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark
 
 ## Citation
 

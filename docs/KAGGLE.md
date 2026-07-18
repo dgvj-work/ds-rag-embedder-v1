@@ -25,6 +25,21 @@ python scripts/generate_kaggle_notebook.py
 
 ## How to publish on Kaggle
 
+**Automated (API):**
+
+```bash
+pip install kaggle
+# Place token at ~/.kaggle/kaggle.json (Kaggle → Settings → API)
+chmod +x scripts/publish_kaggle.sh
+./scripts/publish_kaggle.sh
+```
+
+Default kernel URL: https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark
+
+Override slug: `KAGGLE_KERNEL_ID=youruser/your-slug ./scripts/publish_kaggle.sh`
+
+**Manual:**
+
 1. Go to [kaggle.com/code](https://www.kaggle.com/code) and create a new notebook
 2. Upload the notebook or paste cells
 3. Enable **GPU** accelerator (Settings)
