@@ -18,6 +18,7 @@ outputs/*
 !outputs/benchmark_report.html
 checkpoints/
 exports/
+.pypi_env
 *.pt
 *.bin
 *.safetensors

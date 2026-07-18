@@ -9,7 +9,7 @@ Track public distribution URLs. Updated after publish runs.
 | HF Dataset | https://huggingface.co/datasets/waghelad/ds-rag-eval-v1 | Live |
 | HF Space | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Live |
 | GitHub | https://github.com/dgvj-work/ds-rag-embedder-v1 | Live |
-| PyPI | https://pypi.org/project/ds-rag-embedder/ | **Needs API token** (see below) |
+| PyPI | https://pypi.org/project/ds-rag-embedder/1.0.0/ | **Live** (v1.0.0) |
 | Kaggle notebook | https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark | **Needs API token** (see below) |
 
 ## Publish commands

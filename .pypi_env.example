@@ -1,0 +1,4 @@
+# Copy to .pypi_env and fill in your PyPI API token (never commit .pypi_env)
+# PyPI → Account settings → API tokens → Create token (scope: entire account or project)
+TWINE_USERNAME=__token__
+TWINE_PASSWORD=pypi-PASTE_YOUR_TOKEN_HERE

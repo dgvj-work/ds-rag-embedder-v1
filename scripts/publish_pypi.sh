@@ -14,6 +14,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Optional local credentials file (gitignored): TWINE_USERNAME= / TWINE_PASSWORD=
+if [[ -f "$ROOT/.pypi_env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT/.pypi_env"
+  set +a
+fi
+
 TEST=0
 if [[ "${1:-}" == "--test" ]]; then
   TEST=1
@@ -24,10 +32,12 @@ if ! command -v twine >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ -z "${TWINE_PASSWORD:-}" ]]; then
-  echo "ERROR: set TWINE_PASSWORD (PyPI API token)"
-  echo "  export TWINE_USERNAME=__token__"
-  echo "  export TWINE_PASSWORD=pypi-..."
+if [[ -z "${TWINE_PASSWORD:-}" ]] && [[ ! -f "$HOME/.pypirc" ]]; then
+  echo "ERROR: PyPI credentials not found."
+  echo "  Option A — create $ROOT/.pypi_env with:"
+  echo "    TWINE_USERNAME=__token__"
+  echo "    TWINE_PASSWORD=pypi-..."
+  echo "  Option B — create ~/.pypirc (see https://packaging.python.org/en/latest/specifications/pypirc/)"
   exit 1
 fi
 
