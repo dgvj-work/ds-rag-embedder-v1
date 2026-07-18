@@ -9,7 +9,7 @@ python_version: "3.11"
 app_file: app.py
 pinned: true
 license: apache-2.0
-short_description: Search DS/ML docs with domain-tuned embeddings — Recall@1 0.851 on 87 eval queries
+short_description: Domain-tuned embeddings for DS/ML doc retrieval (R@1 0.85)
 tags:
   - rag
   - retrieval
