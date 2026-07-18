@@ -9,6 +9,6 @@
   "hf_dataset_repo": "waghelad/ds-rag-eval-v1",
   "hf_model_commit": "fda3162a1fb08d7d96eb3eaf952061e1303cd98f",
   "hf_model_readme_commit": "6631524c09e5635fce5b3831e9fbaed8025fa929",
-  "hf_space_commit": "9320fc0e49909af673995cd61fe410c2f7719623",
+  "hf_space_commit": "ef4a1bb3922011e437320bc7c53ae884fbd5ca88",
   "eval_generated_at": "2026-07-17T23:48:05.329581+00:00"
 }
