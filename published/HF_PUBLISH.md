@@ -8,11 +8,12 @@ This folder documents the published Hugging Face artifacts and keeps GitHub in s
 |-------|-----|--------|
 | Model | https://huggingface.co/waghelad/ds-rag-embedder-v1 | Published |
 | Dataset | https://huggingface.co/datasets/waghelad/ds-rag-eval-v1 | Published |
-| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Published via `scripts/publish_space.sh` |
+| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Published (commit `9320fc0`) |
 
 ## Model publish commit (HF)
 
-- Commit: `fda3162a1fb08d7d96eb3eaf952061e1303cd98f`
+- Weights commit: `fda3162a1fb08d7d96eb3eaf952061e1303cd98f`
+- README sync commit: `6631524c09e5635fce5b3831e9fbaed8025fa929`
 - Size: ~133 MB (`model.safetensors`)
 - Base model: `BAAI/bge-small-en-v1.5`
 

@@ -31,4 +31,4 @@ hf upload "$SPACE_ID" . --repo-type=space \
 # Space README with YAML frontmatter
 hf upload "$SPACE_ID" README_HF_SPACE.md README.md --repo-type=space
 
-echo "Done: https://huggingface.co/spaces/${SPACE_ID#*/}"
+echo "Done: https://huggingface.co/spaces/$SPACE_ID"
