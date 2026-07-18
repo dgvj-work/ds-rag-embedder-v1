@@ -1,5 +1,5 @@
 ---
-title: DS RAG Embedder Demo
+title: DS RAG Embedder — ML Doc Retrieval Demo
 emoji: 🔬
 colorFrom: blue
 colorTo: green
@@ -9,7 +9,7 @@ python_version: "3.11"
 app_file: app.py
 pinned: true
 license: apache-2.0
-short_description: DS/ML documentation RAG retrieval demo
+short_description: Search DS/ML docs with domain-tuned embeddings — Recall@1 0.851 on 87 eval queries
 tags:
   - rag
   - retrieval
@@ -26,12 +26,11 @@ datasets:
 suggested_hardware: cpu-basic
 ---
 
-# DS RAG Embedder Demo
+# DS RAG Embedder — Documentation Retrieval Demo
 
-Try domain-specific retrieval for **Data Science & ML** documentation.
+Interactive semantic search over **600 Data Science & ML passages** using
+[`waghelad/ds-rag-embedder-v1`](https://huggingface.co/waghelad/ds-rag-embedder-v1).
 
-1. Enter a DS/ML question
-2. Click **Retrieve** → top passages + LLM-ready prompt
-3. Use **Compare embedders** to see generic vs domain retrieval
+**Benchmark:** Recall@1 **0.851** · Recall@5 **1.000** on 87 held-out queries (vs MiniLM 0.621).
 
-Model: [`waghelad/ds-rag-embedder-v1`](https://huggingface.co/waghelad/ds-rag-embedder-v1)
+Try example queries for metrics, leakage, MLOps, RAG evaluation, and deployment — or paste your own retrieval query.
