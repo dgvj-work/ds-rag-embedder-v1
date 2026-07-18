@@ -14,9 +14,14 @@ import random
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CORPUS_OUT = ROOT / "data" / "corpus" / "ds_ml_corpus.jsonl"
-EVAL_OUT = ROOT / "data" / "eval" / "ds_retrieval_eval.jsonl"
-BENCH_OUT = ROOT / "data" / "benchmarks" / "ds_rag_benchmark.jsonl"
+DEFAULT_DATA_ROOT = ROOT / "data"
+
+
+def _rel_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 # ---------------------------------------------------------------------------
 # Curated DS/ML knowledge passages (high-quality, retrieval-ready)
@@ -555,7 +560,12 @@ def _write_jsonl(path: Path, rows: list[dict]) -> None:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def build(seed: int = 42, corpus_size: int = 600) -> dict:
+def build(seed: int = 42, corpus_size: int = 600, output_root: Path | None = None) -> dict:
+    data_root = output_root or DEFAULT_DATA_ROOT
+    corpus_out = data_root / "corpus" / "ds_ml_corpus.jsonl"
+    eval_out = data_root / "eval" / "ds_retrieval_eval.jsonl"
+    bench_out = data_root / "benchmarks" / "ds_rag_benchmark.jsonl"
+
     rng = random.Random(seed)
     corpus = _expand_corpus(rng, corpus_size)
 
@@ -592,19 +602,22 @@ def build(seed: int = 42, corpus_size: int = 600) -> dict:
                 }
             )
 
-    _write_jsonl(CORPUS_OUT, corpus)
-    _write_jsonl(EVAL_OUT, eval_rows)
-    _write_jsonl(BENCH_OUT, benchmark_rows)
+    _write_jsonl(corpus_out, corpus)
+    _write_jsonl(eval_out, eval_rows)
+    _write_jsonl(bench_out, benchmark_rows)
 
     stats = {
         "corpus_size": len(corpus),
         "eval_pairs": len(eval_rows),
         "benchmark_queries": len(benchmark_rows),
-        "corpus_path": str(CORPUS_OUT),
-        "eval_path": str(EVAL_OUT),
-        "benchmark_path": str(BENCH_OUT),
+        "corpus_path": _rel_path(corpus_out),
+        "eval_path": _rel_path(eval_out),
+        "benchmark_path": _rel_path(bench_out),
     }
-    (ROOT / "data" / "corpus_stats.json").write_text(json.dumps(stats, indent=2), encoding="utf-8")
+    if output_root is None:
+        (DEFAULT_DATA_ROOT / "corpus_stats.json").write_text(
+            json.dumps(stats, indent=2), encoding="utf-8"
+        )
     return stats
 
 

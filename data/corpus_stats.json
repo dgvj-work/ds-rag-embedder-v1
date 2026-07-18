@@ -2,7 +2,7 @@
   "corpus_size": 600,
   "eval_pairs": 658,
   "benchmark_queries": 87,
-  "corpus_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/corpus/ds_ml_corpus.jsonl",
-  "eval_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/eval/ds_retrieval_eval.jsonl",
-  "benchmark_path": "/Users/digvijaywaghela/Desktop/Data Science Projects/ds-rag-embedder-v1/data/benchmarks/ds_rag_benchmark.jsonl"
+  "corpus_path": "data/corpus/ds_ml_corpus.jsonl",
+  "eval_path": "data/eval/ds_retrieval_eval.jsonl",
+  "benchmark_path": "data/benchmarks/ds_rag_benchmark.jsonl"
 }

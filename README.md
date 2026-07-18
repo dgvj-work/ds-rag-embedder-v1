@@ -3,6 +3,8 @@
 [![GitHub](https://img.shields.io/badge/GitHub-dgvj--work%2Fds--rag--embedder--v1-blue)](https://github.com/dgvj-work/ds-rag-embedder-v1)
 [![Model](https://img.shields.io/badge/🤗%20Model-ds--rag--embedder--v1-blue)](https://huggingface.co/waghelad/ds-rag-embedder-v1)
 [![Dataset](https://img.shields.io/badge/🤗%20Dataset-ds--rag--eval--v1-blue)](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
+[![Space](https://img.shields.io/badge/🤗%20Space-ds--rag--embedder--demo-blue)](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](https://github.com/dgvj-work/ds-rag-embedder-v1/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
 
@@ -12,7 +14,7 @@ Fine-tuned from [`BAAI/bge-small-en-v1.5`](https://huggingface.co/BAAI/bge-small
 
 Built for daily use in **LangChain**, **LlamaIndex**, **Chroma**, **FAISS**, and Hugging Face TEI pipelines.
 
-**Published on Hugging Face:** [Model](https://huggingface.co/waghelad/ds-rag-embedder-v1) · [Dataset](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1)
+**Published on Hugging Face:** [Model](https://huggingface.co/waghelad/ds-rag-embedder-v1) · [Dataset](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1) · [Demo Space](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo)
 
 ---
 
@@ -196,7 +198,7 @@ Swap MiniLM/BGE in existing RAG stacks: [`docs/ADOPTION.md`](docs/ADOPTION.md)
 ## Training
 
 ```bash
-# Build corpus + eval sets (600 passages, 640 pairs, 60 benchmark queries)
+# Build corpus + eval sets (600 passages, 658 eval pairs, 87 benchmark queries)
 python scripts/build_corpus.py --corpus-size 600
 
 # Fine-tune (GPU recommended)
@@ -238,7 +240,7 @@ Full guide: [`docs/HF_UPLOAD.md`](docs/HF_UPLOAD.md)
 python app.py
 ```
 
-Or open the Hugging Face Space after deploy (see `README_HF_SPACE.md`).
+Or open the [Hugging Face Space demo](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo).
 
 Tabs: **Retrieve** · **Compare embedders** · **Quick start**
 

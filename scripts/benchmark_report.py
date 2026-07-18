@@ -33,7 +33,6 @@ def _markdown_table(results: dict[str, dict]) -> str:
 
 
 def _html_report(results: dict, category_breakdown: dict | None) -> str:
-    table = _markdown_table(results).replace("|", "</td><td>").replace("\n|", "\n<tr><td>").replace("| ", "<tr><td>").replace(" |", "</td>")
     # simple HTML wrapper
     parts = [
         "<html><head><meta charset='utf-8'><title>DS RAG Benchmark</title>",
@@ -109,7 +108,7 @@ def main() -> None:
         "",
         _markdown_table(results),
         "",
-        "Paste this table into MODEL_CARD.md after training.",
+        "Canonical JSON: `outputs/eval_results.json`. Sync table into `MODEL_CARD.md` when re-publishing.",
     ]
     (out / "benchmark_report.md").write_text("\n".join(md), encoding="utf-8")
     (out / "benchmark_report.html").write_text(

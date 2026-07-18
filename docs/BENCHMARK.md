@@ -42,4 +42,5 @@ print(report.by_category.keys())
 
 - Benchmark is English and DS/ML focused
 - Synthetic expansion augments corpus volume; validate on your own docs
-- Report approximate baseline numbers in README until you run `benchmark_report.py` locally
+- Verified benchmark results are in [`outputs/eval_results.json`](../outputs/eval_results.json) (Recall@1 0.851 on 87 queries)
+- Weakest category on the held-out benchmark: `deployment` (Recall@1 0.0 on 3 queries); validate deployment docs locally

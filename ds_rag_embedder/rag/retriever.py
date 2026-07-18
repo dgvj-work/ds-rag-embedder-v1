@@ -8,7 +8,7 @@ from typing import Any
 import numpy as np
 
 from ds_rag_embedder.model import DSRAGEmbedder
-from ds_rag_embedder.rag.chunker import Chunk, chunk_text
+from ds_rag_embedder.rag.chunker import chunk_text
 
 
 @dataclass

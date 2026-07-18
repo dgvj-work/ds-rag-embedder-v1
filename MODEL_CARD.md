@@ -130,6 +130,7 @@ Not for general web search, legal/medical use without evaluation, or fully autom
 
 - GitHub: https://github.com/dgvj-work/ds-rag-embedder-v1
 - Dataset: https://huggingface.co/datasets/waghelad/ds-rag-eval-v1
+- Demo Space: https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo
 - Kaggle notebook: `notebooks/kaggle_ds_rag_embedder.ipynb`
 
 ## Citation

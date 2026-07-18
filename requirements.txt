@@ -19,6 +19,9 @@ plotly>=5.22
 pytest>=8.0
 ruff>=0.5
 
+# Local package (required for app.py and ds_rag_embedder imports on Space)
+.
+
 # Optional integrations (see docs/RAG_INTEGRATION.md)
 # langchain-community>=0.2
 # llama-index-core>=0.11

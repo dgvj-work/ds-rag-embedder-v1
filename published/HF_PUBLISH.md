@@ -8,7 +8,7 @@ This folder documents the published Hugging Face artifacts and keeps GitHub in s
 |-------|-----|--------|
 | Model | https://huggingface.co/waghelad/ds-rag-embedder-v1 | Published |
 | Dataset | https://huggingface.co/datasets/waghelad/ds-rag-eval-v1 | Published |
-| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Not published yet |
+| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Published via `scripts/publish_space.sh` |
 
 ## Model publish commit (HF)
 
@@ -45,6 +45,7 @@ GitHub files that must match Hugging Face:
 | `outputs/eval_results.json` | Embedded in model card under "Latest evaluation" |
 | `data/*` corpus/eval/benchmark | Dataset repo configs + `data/*.jsonl` |
 | `scripts/publish_dataset.py` | Dataset upload logic |
+| `scripts/publish_space.sh` | Space upload (app.py, package, corpus, README) |
 
 To re-export model card from repo source:
 

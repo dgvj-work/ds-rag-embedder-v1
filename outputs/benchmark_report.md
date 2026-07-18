@@ -8,4 +8,4 @@ Generated: 2026-07-17T23:48:05.329581+00:00
 | bge-small-en-v1.5 | 0.506 | 0.609 | 0.558 | 0.567 | 27.16016379350946 |
 | ds-rag-embedder-v1 | 0.851 | 1.000 | 0.921 | 0.942 | 8.395674322656859 |
 
-Paste this table into MODEL_CARD.md after training.
+Canonical JSON: `outputs/eval_results.json`. Sync table into `MODEL_CARD.md` when re-publishing.

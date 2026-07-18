@@ -47,7 +47,7 @@ hf upload waghelad/ds-rag-embedder-demo . --repo-type=space
 - [x] Model is **public** — https://huggingface.co/waghelad/ds-rag-embedder-v1
 - [x] Dataset is **public** and linked in model card — https://huggingface.co/datasets/waghelad/ds-rag-eval-v1
 - [x] Model card has query prefix documented
-- [ ] Space builds and retrieves example queries
+- [x] Space builds and retrieves example queries — https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo
 - [ ] Pin Space on profile
 - [ ] HF Community post announcing launch
 
