@@ -1,6 +1,6 @@
 {
   "id": "waghelad/ds-rag-embedder-v1-train-benchmark",
-  "title": "DS RAG Embedder v1: Train, Benchmark, and Deploy Domain Embeddings",
+  "title": "DS RAG Embedder v1 Train Benchmark",
   "code_file": "kaggle_ds_rag_embedder.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -8,19 +8,7 @@
   "enable_gpu": true,
   "enable_internet": true,
   "enable_tpu": false,
-  "keywords": [
-    "rag",
-    "retrieval-augmented-generation",
-    "nlp",
-    "embeddings",
-    "vector-search",
-    "data-science",
-    "machine-learning",
-    "huggingface",
-    "sentence-transformers",
-    "retrieval",
-    "fine-tuning"
-  ],
+  "keywords": ["nlp"],
   "dataset_sources": [],
   "kernel_sources": [],
   "competition_sources": []

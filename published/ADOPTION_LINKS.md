@@ -10,7 +10,7 @@ Track public distribution URLs. Updated after publish runs.
 | HF Space | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | Live |
 | GitHub | https://github.com/dgvj-work/ds-rag-embedder-v1 | Live |
 | PyPI | https://pypi.org/project/ds-rag-embedder/1.0.0/ | **Live** (v1.0.0) |
-| Kaggle notebook | https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark | **Needs API token** (see below) |
+| Kaggle notebook | https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark | **Live** |
 
 ## Publish commands
 
@@ -20,8 +20,8 @@ python scripts/publish_hf_community.py
 
 # Kaggle
 pip install kaggle
-# Kaggle → Settings → API → Create New Token → ~/.kaggle/kaggle.json
-chmod 600 ~/.kaggle/kaggle.json
+# Kaggle → Settings → API → Create New Token
+export KAGGLE_API_TOKEN=KGAT_...
 ./scripts/publish_kaggle.sh
 
 # PyPI

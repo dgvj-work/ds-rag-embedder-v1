@@ -3,7 +3,8 @@
 #
 # Prerequisites:
 #   pip install kaggle
-#   Place API token at ~/.kaggle/kaggle.json (Kaggle → Settings → API → Create New Token)
+#   export KAGGLE_API_TOKEN=KGAT_...   # Kaggle → Settings → API
+#   # Legacy: export KAGGLE_USERNAME=... KAGGLE_KEY=...
 #
 # Usage:
 #   ./scripts/publish_kaggle.sh
@@ -19,12 +20,15 @@ if ! command -v kaggle >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ -z "${KAGGLE_USERNAME:-}" || -z "${KAGGLE_KEY:-}" ]]; then
-  if [[ ! -f "$HOME/.kaggle/kaggle.json" ]]; then
-    echo "ERROR: Kaggle credentials not found."
-    echo "  Option A — export KAGGLE_USERNAME and KAGGLE_KEY"
-    echo "  Option B — ~/.kaggle/kaggle.json (Settings → API → Create New Token)"
-    exit 1
+if [[ -z "${KAGGLE_API_TOKEN:-}" ]]; then
+  if [[ -z "${KAGGLE_USERNAME:-}" || -z "${KAGGLE_KEY:-}" ]]; then
+    if [[ ! -f "$HOME/.kaggle/access_token" && ! -f "$HOME/.kaggle/kaggle.json" ]]; then
+      echo "ERROR: Kaggle credentials not found."
+      echo "  Option A — export KAGGLE_API_TOKEN=KGAT_..."
+      echo "  Option B — export KAGGLE_USERNAME and KAGGLE_KEY (legacy)"
+      echo "  Option C — ~/.kaggle/access_token or ~/.kaggle/kaggle.json"
+      exit 1
+    fi
   fi
 fi
 
@@ -35,7 +39,7 @@ cp "$NOTEBOOKS/kaggle_ds_rag_embedder.ipynb" "$TMP/"
 cat > "$TMP/kernel-metadata.json" <<EOF
 {
   "id": "$KERNEL_ID",
-  "title": "DS RAG Embedder v1: Train, Benchmark, and Deploy Domain Embeddings",
+  "title": "DS RAG Embedder v1 Train Benchmark",
   "code_file": "kaggle_ds_rag_embedder.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -43,7 +47,7 @@ cat > "$TMP/kernel-metadata.json" <<EOF
   "enable_gpu": true,
   "enable_internet": true,
   "enable_tpu": false,
-  "keywords": ["rag", "retrieval-augmented-generation", "nlp", "embeddings", "vector-search", "data-science", "machine-learning", "huggingface", "sentence-transformers", "retrieval", "fine-tuning"],
+  "keywords": ["nlp"],
   "dataset_sources": [],
   "kernel_sources": [],
   "competition_sources": []

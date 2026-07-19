@@ -29,7 +29,7 @@ python scripts/generate_kaggle_notebook.py
 
 ```bash
 pip install kaggle
-# Place token at ~/.kaggle/kaggle.json (Kaggle → Settings → API)
+# Kaggle → Settings → API → export KAGGLE_API_TOKEN=KGAT_...
 chmod +x scripts/publish_kaggle.sh
 ./scripts/publish_kaggle.sh
 ```
