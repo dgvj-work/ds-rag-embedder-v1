@@ -51,7 +51,7 @@ hf upload waghelad/ds-rag-embedder-demo . --repo-type=space
 - [ ] Pin Space on profile
 - [x] HF Community launch post — https://huggingface.co/waghelad/ds-rag-embedder-v1/discussions/1
 - [x] PyPI package — https://pypi.org/project/ds-rag-embedder/1.0.0/
-- [ ] Kaggle notebook — `./scripts/publish_kaggle.sh`
+- [x] Kaggle notebook — https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark (v6, P100-safe)
 
 See [`published/HF_PUBLISH.md`](../published/HF_PUBLISH.md) for publish commit hash and benchmark results synced with GitHub.
 

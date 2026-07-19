@@ -8,7 +8,10 @@ This folder documents the published Hugging Face artifacts and keeps GitHub in s
 |-------|-----|--------|
 | Model | https://huggingface.co/waghelad/ds-rag-embedder-v1 | Published |
 | Dataset | https://huggingface.co/datasets/waghelad/ds-rag-eval-v1 | Published |
-| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | **Running** — Gradio 5.12, commit `a382ac8` |
+| Space demo | https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo | **Running** — Gradio, HF runtime `RUNNING` |
+| Kaggle notebook | https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark | **Live** (kernel v6) |
+| PyPI | https://pypi.org/project/ds-rag-embedder/1.0.0/ | **Live** |
+| GitHub | https://github.com/dgvj-work/ds-rag-embedder-v1 | **Live** (`master` @ `2cb268d`) |
 
 ## Model publish commit (HF)
 
