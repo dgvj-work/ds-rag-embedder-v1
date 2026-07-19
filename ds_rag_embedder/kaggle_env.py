@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import gc
-import importlib
 import subprocess
 import sys
 from pathlib import Path
@@ -11,48 +10,40 @@ from pathlib import Path
 from ds_rag_embedder.config import EmbedderConfig
 
 
-def _run_quiet(cmd: list[str]) -> None:
-    subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+def legacy_gpu_needs_torch_fix() -> bool:
+    """Detect P100/sm_60 via nvidia-smi (safe before torch import)."""
+    try:
+        cap = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"],
+            text=True,
+        ).strip()
+        return int(cap.split(".")[0]) < 7
+    except Exception:
+        return False
 
 
 def configure_torch_for_kaggle() -> None:
     """
-    Fix Kaggle GPU incompatibilities before importing sentence-transformers.
+    Verify GPU/torch state after the notebook setup cell.
 
-    Tesla P100 (sm_60) fails backward passes with PyTorch cu128 builds that
-    dropped sm_60 kernels. Reinstall cu126 wheels when needed.
+    PyTorch reinstall for P100 must happen in the first notebook cell *before*
+    importing torch — reloading torch in Jupyter raises ImportError.
     """
     import torch
 
     if not torch.cuda.is_available():
+        print("WARNING: CUDA not available in this session.")
         return
 
     major, minor = torch.cuda.get_device_capability(0)
     name = torch.cuda.get_device_name(0)
-    print(f"GPU: {name} (sm_{major}{minor}) | torch {torch.__version__}")
+    print(f"GPU ready: {name} (sm_{major}{minor}) | torch {torch.__version__}")
 
-    if major >= 7:
-        return
-
-    print("Legacy GPU (sm_60/sm_61) detected — installing PyTorch cu126 for CUDA kernel compatibility…")
-    _run_quiet([sys.executable, "-m", "pip", "uninstall", "-y", "torch", "torchvision", "torchaudio"])
-    _run_quiet(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "-q",
-            "--no-cache-dir",
-            "torch",
-            "torchvision",
-            "torchaudio",
-            "--index-url",
-            "https://download.pytorch.org/whl/cu126",
-        ]
-    )
-    importlib.invalidate_caches()
-    import torch as torch_reloaded  # noqa: F401
+    if legacy_gpu_needs_torch_fix() and "+cu128" in torch.__version__:
+        raise RuntimeError(
+            "P100 detected but PyTorch cu128 is still loaded. Re-run the setup cell "
+            "from the top (Session → Restart & Run All)."
+        )
 
 
 def cuda_sanity_check() -> None:

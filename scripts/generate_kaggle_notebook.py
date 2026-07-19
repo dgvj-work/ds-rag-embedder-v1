@@ -67,11 +67,22 @@ This notebook walks through the full pipeline: curated corpus → fine-tuning �
 """
     ),
     code(
-        """import importlib
-import subprocess
+        """import subprocess
 import sys
 
-# Install deps without upgrading Kaggle's CUDA-enabled PyTorch (T4 path).
+
+def legacy_gpu_needs_torch_fix() -> bool:
+    \"\"\"Detect P100/sm_60 before importing torch (reload breaks in Jupyter).\"\"\"
+    try:
+        cap = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"],
+            text=True,
+        ).strip()
+        return int(cap.split(".")[0]) < 7
+    except Exception:
+        return False
+
+
 subprocess.check_call(
     [
         sys.executable,
@@ -92,6 +103,31 @@ subprocess.check_call(
     stderr=subprocess.STDOUT,
 )
 
+if legacy_gpu_needs_torch_fix():
+    print("Legacy GPU (P100/sm_60) detected — installing PyTorch cu126 before import…")
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "uninstall", "-y", "torch", "torchvision", "torchaudio"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
+    )
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "-q",
+            "--no-cache-dir",
+            "torch",
+            "torchvision",
+            "torchaudio",
+            "--index-url",
+            "https://download.pytorch.org/whl/cu126",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
+    )
+
 import torch
 
 if torch.cuda.is_available():
@@ -103,39 +139,6 @@ if torch.cuda.is_available():
         torch.cuda.get_device_name(0),
         f"| sm_{major}{minor}",
     )
-    # P100 (sm_60) needs cu126 wheels — cu128 builds drop sm_60 kernels (AcceleratorError).
-    if major < 7:
-        print("Installing PyTorch cu126 for legacy GPU compatibility…")
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "uninstall", "-y", "torch", "torchvision", "torchaudio"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-        )
-        subprocess.check_call(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "-q",
-                "--no-cache-dir",
-                "torch",
-                "torchvision",
-                "torchaudio",
-                "--index-url",
-                "https://download.pytorch.org/whl/cu126",
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-        )
-        importlib.invalidate_caches()
-        import importlib.util
-
-        import torch as _torch
-
-        importlib.reload(_torch)
-        torch = _torch
-
     x = torch.randn(8, 8, device="cuda", requires_grad=True)
     x.sum().backward()
     torch.cuda.synchronize()
