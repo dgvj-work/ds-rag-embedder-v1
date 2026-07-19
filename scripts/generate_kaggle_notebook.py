@@ -73,18 +73,12 @@ pip(
 )
 
 if IS_LEGACY_GPU:
-    print("P100/sm_60 detected — installing torch-only cu126 (no torchvision/torchcodec)…")
-    pip("uninstall", "-y", "torch", "torchvision", "torchaudio", "torchcodec")
-    pip(
-        "install",
-        "-q",
-        "--no-cache-dir",
-        "torch==2.5.1",
-        "--index-url",
-        "https://download.pytorch.org/whl/cu126",
+    print(
+        "P100/sm_60 detected — keeping Kaggle PyTorch for inference; "
+        "section 3 loads published HF weights (no fine-tuning)."
     )
 else:
-    print("T4/modern GPU — keeping Kaggle PyTorch.")
+    print("T4/modern GPU — keeping Kaggle PyTorch for full fine-tuning.")
 
 pip("install", "-q", "sentence-transformers>=3.0", "--no-deps")
 
@@ -99,12 +93,17 @@ if torch.cuda.is_available():
         torch.cuda.get_device_name(0),
         f"| sm_{major}{minor}",
     )
-    x = torch.randn(8, 8, device="cuda", requires_grad=True)
-    x.sum().backward()
-    torch.cuda.synchronize()
-    print("CUDA sanity check passed.")
     if IS_LEGACY_GPU:
-        print("P100 mode: section 3 loads published HF weights (same benchmark scores).")
+        a = torch.randn(64, 64, device="cuda")
+        b = torch.randn(64, 64, device="cuda")
+        torch.matmul(a, b).sum().item()
+        torch.cuda.synchronize()
+        print("CUDA forward check passed (P100 inference mode).")
+    else:
+        x = torch.randn(8, 8, device="cuda", requires_grad=True)
+        x.sum().backward()
+        torch.cuda.synchronize()
+        print("CUDA sanity check passed.")
 else:
     print("WARNING: No GPU detected. Enable GPU in Settings → Accelerator.")
 '''

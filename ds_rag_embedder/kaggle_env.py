@@ -35,7 +35,7 @@ def configure_torch_for_kaggle() -> None:
 
 
 def cuda_sanity_check() -> None:
-    """Raise if CUDA tensors cannot run a backward pass."""
+    """Raise if basic CUDA ops fail (forward-only on P100)."""
     import torch
 
     if not torch.cuda.is_available():
@@ -43,11 +43,16 @@ def cuda_sanity_check() -> None:
             "No GPU detected. In Kaggle: Settings → Accelerator → GPU (T4/P100), then re-run."
         )
 
-    x = torch.randn(8, 8, device="cuda", requires_grad=True)
-    loss = x.sum()
-    loss.backward()
+    if legacy_gpu_needs_torch_fix():
+        a = torch.randn(64, 64, device="cuda")
+        b = torch.randn(64, 64, device="cuda")
+        torch.matmul(a, b).sum().item()
+    else:
+        x = torch.randn(8, 8, device="cuda", requires_grad=True)
+        x.sum().backward()
+
     torch.cuda.synchronize()
-    print("CUDA sanity check passed.")
+    print("CUDA check passed.")
 
 
 def assert_gpu_ready() -> None:
