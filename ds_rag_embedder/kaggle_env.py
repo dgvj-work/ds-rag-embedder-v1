@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import gc
 import subprocess
-import sys
 from pathlib import Path
 
 from ds_rag_embedder.config import EmbedderConfig
@@ -23,12 +22,7 @@ def legacy_gpu_needs_torch_fix() -> bool:
 
 
 def configure_torch_for_kaggle() -> None:
-    """
-    Verify GPU/torch state after the notebook setup cell.
-
-    PyTorch reinstall for P100 must happen in the first notebook cell *before*
-    importing torch — reloading torch in Jupyter raises ImportError.
-    """
+    """Verify GPU/torch state after the notebook setup cell."""
     import torch
 
     if not torch.cuda.is_available():
@@ -39,15 +33,9 @@ def configure_torch_for_kaggle() -> None:
     name = torch.cuda.get_device_name(0)
     print(f"GPU ready: {name} (sm_{major}{minor}) | torch {torch.__version__}")
 
-    if legacy_gpu_needs_torch_fix() and "+cu128" in torch.__version__:
-        raise RuntimeError(
-            "P100 detected but PyTorch cu128 is still loaded. Re-run the setup cell "
-            "from the top (Session → Restart & Run All)."
-        )
-
 
 def cuda_sanity_check() -> None:
-    """Raise if CUDA tensors cannot run a backward pass (common Kaggle failure)."""
+    """Raise if CUDA tensors cannot run a backward pass."""
     import torch
 
     if not torch.cuda.is_available():
@@ -68,25 +56,41 @@ def assert_gpu_ready() -> None:
 
 
 def kaggle_train_config(output_dir: Path | None = None) -> EmbedderConfig:
-    """Memory-safe hyperparameters for Kaggle T4/P100 notebooks."""
+    """Memory-safe hyperparameters for Kaggle T4 notebooks."""
     return EmbedderConfig(
-        epochs=3,
-        batch_size=16,
+        epochs=2,
+        batch_size=12,
         max_seq_length=256,
         output_dir=output_dir or Path("models/ds-rag-embedder-v1"),
     )
 
 
+def _download_published_model(output_dir: Path, hub_model_id: str) -> Path:
+    from huggingface_hub import snapshot_download
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    snapshot_download(repo_id=hub_model_id, local_dir=str(output_dir))
+    print(f"Loaded published weights → {output_dir}")
+    return output_dir
+
+
 def ensure_trained_model(output_dir: Path, hub_model_id: str = "waghelad/ds-rag-embedder-v1") -> Path:
     """
-    Train locally or fall back to published Hugging Face weights so downstream
-    benchmark cells still run if fine-tuning fails.
+    On T4+: fine-tune locally. On P100 or failure: use published Hugging Face weights
+    so the notebook always completes with the same benchmark-quality model.
     """
+    output_dir = Path(output_dir)
+
+    if legacy_gpu_needs_torch_fix():
+        print(
+            "P100/sm_60 detected — skipping on-notebook fine-tuning "
+            "(CUDA/torchcodec compatibility on Kaggle)."
+        )
+        return _download_published_model(output_dir, hub_model_id)
+
     from ds_rag_embedder.train import train
 
-    output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-
     gc.collect()
     try:
         import torch
@@ -102,9 +106,5 @@ def ensure_trained_model(output_dir: Path, hub_model_id: str = "waghelad/ds-rag-
         return path
     except Exception as exc:
         print(f"Fine-tuning failed ({type(exc).__name__}: {exc})")
-        print(f"Falling back to published weights → {hub_model_id}")
 
-    from huggingface_hub import snapshot_download
-
-    snapshot_download(repo_id=hub_model_id, local_dir=str(output_dir))
-    return output_dir
+    return _download_published_model(output_dir, hub_model_id)

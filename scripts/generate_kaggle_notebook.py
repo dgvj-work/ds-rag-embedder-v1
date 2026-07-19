@@ -24,6 +24,92 @@ def code(source: str) -> dict:
     }
 
 
+SETUP_CELL = '''import subprocess
+import sys
+
+
+def pip(*args: str) -> None:
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", *args],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
+    )
+
+
+def legacy_gpu() -> bool:
+    """Detect P100/sm_60 before importing torch."""
+    try:
+        cap = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"],
+            text=True,
+        ).strip()
+        return int(cap.split(".")[0]) < 7
+    except Exception:
+        return False
+
+
+IS_LEGACY_GPU = legacy_gpu()
+
+subprocess.call(
+    [sys.executable, "-m", "pip", "uninstall", "-y", "torchcodec"],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+)
+
+pip(
+    "install",
+    "-q",
+    "datasets",
+    "huggingface_hub",
+    "scikit-learn",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "tqdm",
+    "transformers>=4.40",
+    "accelerate>=1.1.0",
+    "scipy",
+    "Pillow",
+)
+
+if IS_LEGACY_GPU:
+    print("P100/sm_60 detected — installing torch-only cu126 (no torchvision/torchcodec)…")
+    pip("uninstall", "-y", "torch", "torchvision", "torchaudio", "torchcodec")
+    pip(
+        "install",
+        "-q",
+        "--no-cache-dir",
+        "torch==2.5.1",
+        "--index-url",
+        "https://download.pytorch.org/whl/cu126",
+    )
+else:
+    print("T4/modern GPU — keeping Kaggle PyTorch.")
+
+pip("install", "-q", "sentence-transformers>=3.0", "--no-deps")
+
+import torch
+
+if torch.cuda.is_available():
+    major, minor = torch.cuda.get_device_capability(0)
+    print(
+        "PyTorch",
+        torch.__version__,
+        "| GPU:",
+        torch.cuda.get_device_name(0),
+        f"| sm_{major}{minor}",
+    )
+    x = torch.randn(8, 8, device="cuda", requires_grad=True)
+    x.sum().backward()
+    torch.cuda.synchronize()
+    print("CUDA sanity check passed.")
+    if IS_LEGACY_GPU:
+        print("P100 mode: section 3 loads published HF weights (same benchmark scores).")
+else:
+    print("WARNING: No GPU detected. Enable GPU in Settings → Accelerator.")
+'''
+
+
 cells = [
     md(
         """# DS RAG Embedder v1: Train, Benchmark, and Deploy Domain Embeddings
@@ -66,87 +152,7 @@ This notebook walks through the full pipeline: curated corpus → fine-tuning �
 10. Export results and optional Hugging Face upload
 """
     ),
-    code(
-        """import subprocess
-import sys
-
-
-def legacy_gpu_needs_torch_fix() -> bool:
-    \"\"\"Detect P100/sm_60 before importing torch (reload breaks in Jupyter).\"\"\"
-    try:
-        cap = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"],
-            text=True,
-        ).strip()
-        return int(cap.split(".")[0]) < 7
-    except Exception:
-        return False
-
-
-subprocess.check_call(
-    [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "-q",
-        "sentence-transformers>=3.0",
-        "datasets",
-        "huggingface_hub",
-        "scikit-learn",
-        "pandas",
-        "matplotlib",
-        "seaborn",
-        "tqdm",
-    ],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.STDOUT,
-)
-
-if legacy_gpu_needs_torch_fix():
-    print("Legacy GPU (P100/sm_60) detected — installing PyTorch cu126 before import…")
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "uninstall", "-y", "torch", "torchvision", "torchaudio"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT,
-    )
-    subprocess.check_call(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "-q",
-            "--no-cache-dir",
-            "torch",
-            "torchvision",
-            "torchaudio",
-            "--index-url",
-            "https://download.pytorch.org/whl/cu126",
-        ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT,
-    )
-
-import torch
-
-if torch.cuda.is_available():
-    major, minor = torch.cuda.get_device_capability(0)
-    print(
-        "PyTorch",
-        torch.__version__,
-        "| GPU:",
-        torch.cuda.get_device_name(0),
-        f"| sm_{major}{minor}",
-    )
-    x = torch.randn(8, 8, device="cuda", requires_grad=True)
-    x.sum().backward()
-    torch.cuda.synchronize()
-    print("CUDA sanity check passed.")
-else:
-    print("WARNING: No GPU detected. Enable GPU in Settings → Accelerator.")
-"""
-    ),
+    code(SETUP_CELL),
     code(
         """import json
 import sys
@@ -202,7 +208,7 @@ print('Title:', sample['title'])
 print(sample['text'][:500])
 """
     ),
-    md("## 3. Fine-tune DS RAG Embedder"),
+    md("## 3. Load or fine-tune DS RAG Embedder\n\n> **P100 GPUs:** uses published [HF weights](https://huggingface.co/waghelad/ds-rag-embedder-v1) (same benchmark scores). **T4+:** fine-tunes on the corpus."),
     code(
         """from pathlib import Path
 

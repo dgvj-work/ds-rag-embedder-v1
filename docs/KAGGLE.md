@@ -46,6 +46,7 @@ If fine-tuning fails with `AcceleratorError` in cell 7:
 2. **P100 (sm_60)** — cu128 PyTorch builds may lack sm_60 kernels; the notebook auto-installs cu126 wheels when needed
 3. **Re-publish after GitHub updates** — the notebook clones from GitHub at runtime; run `./scripts/publish_kaggle.sh` after pushing fixes
 4. **Fallback** — if training still fails, the notebook downloads published weights from `waghelad/ds-rag-embedder-v1` so benchmarks still run
+5. **P100 + torchcodec** — the notebook installs torch-only (no torchvision) and skips on-notebook fine-tuning on sm_60 GPUs
 
 **Manual:**
 
