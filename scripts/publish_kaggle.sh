@@ -19,12 +19,13 @@ if ! command -v kaggle >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -f "$HOME/.kaggle/kaggle.json" ]]; then
-  echo "ERROR: missing ~/.kaggle/kaggle.json"
-  echo "  1. https://www.kaggle.com/settings → API → Create New Token"
-  echo "  2. mv ~/Downloads/kaggle.json ~/.kaggle/kaggle.json"
-  echo "  3. chmod 600 ~/.kaggle/kaggle.json"
-  exit 1
+if [[ -z "${KAGGLE_USERNAME:-}" || -z "${KAGGLE_KEY:-}" ]]; then
+  if [[ ! -f "$HOME/.kaggle/kaggle.json" ]]; then
+    echo "ERROR: Kaggle credentials not found."
+    echo "  Option A — export KAGGLE_USERNAME and KAGGLE_KEY"
+    echo "  Option B — ~/.kaggle/kaggle.json (Settings → API → Create New Token)"
+    exit 1
+  fi
 fi
 
 TMP="$(mktemp -d)"
@@ -42,7 +43,7 @@ cat > "$TMP/kernel-metadata.json" <<EOF
   "enable_gpu": true,
   "enable_internet": true,
   "enable_tpu": false,
-  "keywords": ["rag", "nlp", "embeddings", "data-science", "machine-learning", "huggingface", "retrieval"],
+  "keywords": ["rag", "retrieval-augmented-generation", "nlp", "embeddings", "vector-search", "data-science", "machine-learning", "huggingface", "sentence-transformers", "retrieval", "fine-tuning"],
   "dataset_sources": [],
   "kernel_sources": [],
   "competition_sources": []

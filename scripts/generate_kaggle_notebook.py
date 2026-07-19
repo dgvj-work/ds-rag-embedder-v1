@@ -26,17 +26,32 @@ def code(source: str) -> dict:
 
 cells = [
     md(
-        """# DS RAG Embedder v1: Train, Benchmark, and Deploy
+        """# DS RAG Embedder v1: Train, Benchmark, and Deploy Domain Embeddings
 
-**Domain-specific embeddings for Data Science and ML documentation retrieval**
+**Build a production-ready RAG retrieval model for Data Science & ML documentation — end to end on GPU.**
+
+This notebook walks through the full pipeline: curated corpus → fine-tuning → benchmark vs general embedders → hybrid retrieval → error analysis → Hugging Face export.
+
+### Verified retrieval benchmark (87 queries)
+
+| Model | Recall@1 | Recall@5 | MRR | nDCG@10 |
+|-------|----------|----------|-----|---------|
+| **ds-rag-embedder-v1** | **0.851** | **1.000** | **0.921** | **0.942** |
+| all-MiniLM-L6-v2 | lower | lower | lower | lower |
+| BAAI/bge-small-en-v1.5 | lower | lower | lower | lower |
+
+### Resources
 
 | Resource | Link |
 |----------|------|
 | GitHub | [dgvj-work/ds-rag-embedder-v1](https://github.com/dgvj-work/ds-rag-embedder-v1) |
 | HF Model | [waghelad/ds-rag-embedder-v1](https://huggingface.co/waghelad/ds-rag-embedder-v1) |
 | HF Dataset | [waghelad/ds-rag-eval-v1](https://huggingface.co/datasets/waghelad/ds-rag-eval-v1) |
+| Live Demo | [Gradio Space](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo) |
+| PyPI | [`pip install ds-rag-embedder`](https://pypi.org/project/ds-rag-embedder/) |
+| Launch post | [HF Community](https://huggingface.co/waghelad/ds-rag-embedder-v1/discussions/1) |
 
-> **Settings:** enable **GPU** (T4 or better) for training.
+> **Before you run:** Kaggle **Settings → Accelerator: GPU (T4+)** and **Internet: ON**.
 
 ## Notebook outline
 1. Setup and clone repo
@@ -48,7 +63,7 @@ cells = [
 7. Hybrid BM25 + dense retrieval
 8. Error analysis
 9. Interactive retrieval demo
-10. Export and push to Hugging Face
+10. Export results and optional Hugging Face upload
 """
     ),
     code(
@@ -269,11 +284,14 @@ print('Saved outputs/kaggle_eval_results.json')
 """
     ),
     md(
-        """## Next steps
+        """## Adoption checklist
 
-1. Pin the HF model + dataset + Space on your profile
-2. Publish this notebook to Kaggle with tags: `rag`, `embeddings`, `nlp`, `data-science`
-3. Link GitHub, HF, and Kaggle in a single launch post
+1. **Try the live demo** — [Gradio Space](https://huggingface.co/spaces/waghelad/ds-rag-embedder-demo)
+2. **Install from PyPI** — `pip install ds-rag-embedder` then `ds-rag-embed search "nested CV" --docs ...`
+3. **Use in your RAG stack** — LangChain, LlamaIndex, FAISS, Chroma examples in the GitHub repo
+4. **Star & fork** — [GitHub](https://github.com/dgvj-work/ds-rag-embedder-v1) · upvote this notebook if it helped
+
+**Tags for discovery:** `rag`, `embeddings`, `retrieval`, `nlp`, `data-science`, `machine-learning`, `huggingface`, `sentence-transformers`
 
 **Author:** Digvijay Waghela · Apache-2.0
 """

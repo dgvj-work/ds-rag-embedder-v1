@@ -10,13 +10,16 @@
   "enable_tpu": false,
   "keywords": [
     "rag",
+    "retrieval-augmented-generation",
     "nlp",
     "embeddings",
+    "vector-search",
     "data-science",
     "machine-learning",
     "huggingface",
+    "sentence-transformers",
     "retrieval",
-    "sentence-transformers"
+    "fine-tuning"
   ],
   "dataset_sources": [],
   "kernel_sources": [],
