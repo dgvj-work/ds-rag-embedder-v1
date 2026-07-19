@@ -24,20 +24,23 @@ def code(source: str) -> dict:
     }
 
 
-SETUP_CELL = '''import subprocess
+SETUP_CELL = '''import os
+import subprocess
 import sys
 
+KAGGLE_DEVICE = "cuda"
 
-def pip(*args: str) -> None:
-    subprocess.check_call(
+
+def pip_run(*args: str, check: bool = True) -> subprocess.CompletedProcess:
+    return subprocess.run(
         [sys.executable, "-m", "pip", *args],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT,
+        capture_output=True,
+        text=True,
+        check=check,
     )
 
 
 def legacy_gpu() -> bool:
-    """Detect P100/sm_60 before importing torch."""
     try:
         cap = subprocess.check_output(
             ["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"],
@@ -56,7 +59,7 @@ subprocess.call(
     stderr=subprocess.DEVNULL,
 )
 
-pip(
+pip_run(
     "install",
     "-q",
     "datasets",
@@ -73,39 +76,56 @@ pip(
 )
 
 if IS_LEGACY_GPU:
-    print(
-        "P100/sm_60 detected — keeping Kaggle PyTorch for inference; "
-        "section 3 loads published HF weights (no fine-tuning)."
+    print("P100/sm_60 detected — installing torch==2.10.0+cu126 (sm_60 support)…")
+    pip_run("uninstall", "-y", "torch", "torchvision", "torchaudio", "torchcodec", check=False)
+    result = pip_run(
+        "install",
+        "--no-cache-dir",
+        "torch==2.10.0",
+        "--index-url",
+        "https://download.pytorch.org/whl/cu126",
+        check=False,
     )
+    if result.returncode != 0:
+        print("cu126 install failed — switching notebook to CPU mode.")
+        tail = (result.stderr or result.stdout or "")[-600:]
+        if tail.strip():
+            print(tail)
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
+        KAGGLE_DEVICE = "cpu"
 else:
-    print("T4/modern GPU — keeping Kaggle PyTorch for full fine-tuning.")
+    print("T4/modern GPU — using Kaggle PyTorch cu128.")
 
-pip("install", "-q", "sentence-transformers>=3.0", "--no-deps")
+pip_run("install", "-q", "sentence-transformers>=3.0", "--no-deps")
+os.environ["KAGGLE_DEVICE"] = KAGGLE_DEVICE
 
 import torch
 
-if torch.cuda.is_available():
+if KAGGLE_DEVICE == "cpu" or not torch.cuda.is_available():
+    print(f"Runtime: CPU | torch {torch.__version__}")
+else:
     major, minor = torch.cuda.get_device_capability(0)
     print(
-        "PyTorch",
+        "Runtime: CUDA | PyTorch",
         torch.__version__,
         "| GPU:",
         torch.cuda.get_device_name(0),
         f"| sm_{major}{minor}",
     )
-    if IS_LEGACY_GPU:
-        a = torch.randn(64, 64, device="cuda")
-        b = torch.randn(64, 64, device="cuda")
-        torch.matmul(a, b).sum().item()
-        torch.cuda.synchronize()
-        print("CUDA forward check passed (P100 inference mode).")
-    else:
+    try:
         x = torch.randn(8, 8, device="cuda", requires_grad=True)
         x.sum().backward()
         torch.cuda.synchronize()
-        print("CUDA sanity check passed.")
-else:
-    print("WARNING: No GPU detected. Enable GPU in Settings → Accelerator.")
+        print("CUDA check passed.")
+    except Exception as exc:
+        print(f"CUDA unusable ({exc}) — switching to CPU mode.")
+        KAGGLE_DEVICE = "cpu"
+        os.environ["KAGGLE_DEVICE"] = "cpu"
+
+if IS_LEGACY_GPU and KAGGLE_DEVICE == "cuda":
+    print("P100 ready on cu126 — section 3 loads published HF weights.")
+elif IS_LEGACY_GPU:
+    print("P100 CPU mode — section 3 loads published HF weights.")
 '''
 
 

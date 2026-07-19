@@ -1,15 +1,16 @@
-"""Kaggle runtime helpers — GPU checks and training defaults."""
+"""Kaggle runtime helpers — GPU detection, device selection, model loading."""
 
 from __future__ import annotations
 
 import gc
+import os
 import subprocess
 from pathlib import Path
 
 from ds_rag_embedder.config import EmbedderConfig
 
 
-def legacy_gpu_needs_torch_fix() -> bool:
+def legacy_gpu() -> bool:
     """Detect P100/sm_60 via nvidia-smi (safe before torch import)."""
     try:
         cap = subprocess.check_output(
@@ -21,36 +22,49 @@ def legacy_gpu_needs_torch_fix() -> bool:
         return False
 
 
+def kaggle_device() -> str:
+    """Return 'cuda' or 'cpu' based on notebook setup env."""
+    forced = os.environ.get("KAGGLE_DEVICE")
+    if forced in {"cpu", "cuda"}:
+        return forced
+    try:
+        import torch
+
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    except ImportError:
+        return "cpu"
+
+
 def configure_torch_for_kaggle() -> None:
-    """Verify GPU/torch state after the notebook setup cell."""
+    """Log runtime device after setup cell."""
     import torch
 
-    if not torch.cuda.is_available():
-        print("WARNING: CUDA not available in this session.")
+    device = kaggle_device()
+    if device == "cpu":
+        print(f"Runtime: CPU inference | torch {torch.__version__}")
         return
+
+    if not torch.cuda.is_available():
+        raise RuntimeError("KAGGLE_DEVICE=cuda but CUDA is unavailable.")
 
     major, minor = torch.cuda.get_device_capability(0)
     name = torch.cuda.get_device_name(0)
-    print(f"GPU ready: {name} (sm_{major}{minor}) | torch {torch.__version__}")
+    print(f"Runtime: CUDA | torch {torch.__version__} | {name} sm_{major}{minor}")
 
 
 def cuda_sanity_check() -> None:
-    """Raise if basic CUDA ops fail (forward-only on P100)."""
+    """Verify the selected runtime can execute embedding workloads."""
     import torch
 
-    if not torch.cuda.is_available():
-        raise RuntimeError(
-            "No GPU detected. In Kaggle: Settings → Accelerator → GPU (T4/P100), then re-run."
-        )
+    device = kaggle_device()
+    if device == "cpu":
+        x = torch.randn(8, 8)
+        x.sum().item()
+        print("CPU check passed.")
+        return
 
-    if legacy_gpu_needs_torch_fix():
-        a = torch.randn(64, 64, device="cuda")
-        b = torch.randn(64, 64, device="cuda")
-        torch.matmul(a, b).sum().item()
-    else:
-        x = torch.randn(8, 8, device="cuda", requires_grad=True)
-        x.sum().backward()
-
+    x = torch.randn(8, 8, device="cuda", requires_grad=True)
+    x.sum().backward()
     torch.cuda.synchronize()
     print("CUDA check passed.")
 
@@ -81,16 +95,12 @@ def _download_published_model(output_dir: Path, hub_model_id: str) -> Path:
 
 def ensure_trained_model(output_dir: Path, hub_model_id: str = "waghelad/ds-rag-embedder-v1") -> Path:
     """
-    On T4+: fine-tune locally. On P100 or failure: use published Hugging Face weights
-    so the notebook always completes with the same benchmark-quality model.
+    T4 + CUDA: optional fine-tune. P100 / CPU: load published HF weights (same benchmarks).
     """
     output_dir = Path(output_dir)
 
-    if legacy_gpu_needs_torch_fix():
-        print(
-            "P100/sm_60 detected — skipping on-notebook fine-tuning "
-            "(CUDA/torchcodec compatibility on Kaggle)."
-        )
+    if legacy_gpu() or kaggle_device() == "cpu":
+        print("Using published Hugging Face weights (P100/CPU-safe path).")
         return _download_published_model(output_dir, hub_model_id)
 
     from ds_rag_embedder.train import train
@@ -113,3 +123,10 @@ def ensure_trained_model(output_dir: Path, hub_model_id: str = "waghelad/ds-rag-
         print(f"Fine-tuning failed ({type(exc).__name__}: {exc})")
 
     return _download_published_model(output_dir, hub_model_id)
+
+
+def make_embedder(model_name_or_path: str | Path):
+    """Create DSRAGEmbedder with Kaggle-safe device selection."""
+    from ds_rag_embedder.model import DSRAGEmbedder
+
+    return DSRAGEmbedder(model_name_or_path, device=kaggle_device())

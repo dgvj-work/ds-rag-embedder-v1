@@ -10,18 +10,28 @@ Regenerate after edits:
 python scripts/generate_kaggle_notebook.py
 ```
 
+## Runtime matrix (pre-analysed)
+
+| Kaggle GPU | PyTorch | Training in notebook | Model source |
+|------------|---------|-------------------|--------------|
+| **T4** (sm_75+) | Kaggle cu128 | Yes | Fine-tuned locally |
+| **P100** (sm_60) | **torch==2.10.0+cu126** (auto-installed) | No | Published HF weights |
+| **P100 install fail** | CPU fallback | No | Published HF weights |
+
+Kaggle's default **PyTorch 2.10+cu128** does **not** support P100 (minimum sm_70). The notebook setup cell replaces it with **cu126** before importing torch. If that install fails, it sets `KAGGLE_DEVICE=cpu` so the notebook still completes.
+
 ## Sections covered
 
-1. Setup and clone from GitHub
-2. Corpus build and EDA (category charts, text length stats)
-3. Fine-tune DS RAG Embedder on GPU
-4. Benchmark vs MiniLM and BGE (table + bar chart)
-5. Category-level Recall@5 analysis
-6. Latency profiling (ms/query)
-7. Hybrid BM25 + dense retrieval demo
-8. Error analysis (missed queries)
-9. Interactive retrieval examples
-10. Save eval JSON + optional HF upload
+1. Setup (GPU/PyTorch compatibility)
+2. Clone from GitHub + corpus build + EDA
+3. Load or fine-tune embedder
+4. Benchmark vs MiniLM and BGE
+5. Category-level Recall@5
+6. Latency profiling
+7. Hybrid BM25 + dense retrieval
+8. Error analysis
+9. Interactive retrieval demo
+10. Export results
 
 ## How to publish on Kaggle
 
@@ -36,39 +46,26 @@ chmod +x scripts/publish_kaggle.sh
 
 Default kernel URL: https://www.kaggle.com/code/waghelad/ds-rag-embedder-v1-train-benchmark
 
-Override slug: `KAGGLE_KERNEL_ID=youruser/your-slug ./scripts/publish_kaggle.sh`
+## Troubleshooting
 
-## Kaggle GPU troubleshooting
-
-If fine-tuning fails with `AcceleratorError` in cell 7:
-
-1. **Enable GPU** — Settings → Accelerator → GPU (T4 or P100) and **Internet ON**
-2. **P100 (sm_60)** — cu128 PyTorch builds may lack sm_60 kernels; the notebook auto-installs cu126 wheels when needed
-3. **Re-publish after GitHub updates** — the notebook clones from GitHub at runtime; run `./scripts/publish_kaggle.sh` after pushing fixes
-4. **Fallback** — if training still fails, the notebook downloads published weights from `waghelad/ds-rag-embedder-v1` so benchmarks still run
-5. **P100 on Kaggle** — keeps default PyTorch for inference, skips fine-tuning, loads published HF weights (cu126 reinstall is unavailable on Python 3.12)
+| Error | Cause | Fix in notebook |
+|-------|-------|-----------------|
+| `AcceleratorError` on P100 | cu128 PyTorch lacks sm_60 kernels | Auto-install cu126 torch |
+| `importlib.reload` / `ImportError` | Reloading torch after pip | Install cu126 **before** first import |
+| `torchcodec` / `libavutil` | torchvision pulls FFmpeg deps | torch-only install, no torchvision |
+| `pip install torch==2.5.1` fails | Wrong version for py3.12 | Uses **torch==2.10.0** cu126 |
+| cu126 install fails | Network/index edge case | CPU fallback via `KAGGLE_DEVICE=cpu` |
 
 **Manual:**
 
 1. Go to [kaggle.com/code](https://www.kaggle.com/code) and create a new notebook
 2. Upload the notebook or paste cells
-3. Enable **GPU** accelerator (Settings)
-4. Title: **DS RAG Embedder v1: Train, Benchmark, and Deploy Domain Embeddings**
-5. Tags: `rag`, `nlp`, `embeddings`, `data-science`, `huggingface`, `retrieval`
-
-## Recommended Kaggle Dataset
-
-Publish a snapshot of this repo as a Kaggle Dataset so users can skip manual upload:
-
-- Dataset name: `ds-rag-embedder-v1`
-- Include: `ds_rag_embedder/`, `scripts/`, `data/`, `pyproject.toml`
+3. Enable **GPU** accelerator and **Internet**
+4. Title: **DS RAG Embedder v1 Train Benchmark**
 
 ## Link back to Hugging Face
-
-Include in the notebook conclusion:
 
 - Model: https://huggingface.co/waghelad/ds-rag-embedder-v1
 - Dataset: https://huggingface.co/datasets/waghelad/ds-rag-eval-v1
 - GitHub: https://github.com/dgvj-work/ds-rag-embedder-v1
-
-Cross-linking Kaggle, GitHub, and HF improves discovery and download counts.
+- PyPI: https://pypi.org/project/ds-rag-embedder/

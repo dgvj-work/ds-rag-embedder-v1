@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +31,7 @@ class DSRAGEmbedder:
             model_name_or_path or self.config.hub_model_id or self.config.output_dir
         )
         self._model = None
-        self._device = device
+        self._device = device or os.environ.get("KAGGLE_DEVICE")
 
     @property
     def model(self):
