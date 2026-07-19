@@ -67,7 +67,81 @@ This notebook walks through the full pipeline: curated corpus → fine-tuning �
 """
     ),
     code(
-        """!pip install -q sentence-transformers datasets huggingface_hub scikit-learn pandas matplotlib seaborn tqdm
+        """import importlib
+import subprocess
+import sys
+
+# Install deps without upgrading Kaggle's CUDA-enabled PyTorch (T4 path).
+subprocess.check_call(
+    [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "-q",
+        "sentence-transformers>=3.0",
+        "datasets",
+        "huggingface_hub",
+        "scikit-learn",
+        "pandas",
+        "matplotlib",
+        "seaborn",
+        "tqdm",
+    ],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.STDOUT,
+)
+
+import torch
+
+if torch.cuda.is_available():
+    major, minor = torch.cuda.get_device_capability(0)
+    print(
+        "PyTorch",
+        torch.__version__,
+        "| GPU:",
+        torch.cuda.get_device_name(0),
+        f"| sm_{major}{minor}",
+    )
+    # P100 (sm_60) needs cu126 wheels — cu128 builds drop sm_60 kernels (AcceleratorError).
+    if major < 7:
+        print("Installing PyTorch cu126 for legacy GPU compatibility…")
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "uninstall", "-y", "torch", "torchvision", "torchaudio"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+        )
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "-q",
+                "--no-cache-dir",
+                "torch",
+                "torchvision",
+                "torchaudio",
+                "--index-url",
+                "https://download.pytorch.org/whl/cu126",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+        )
+        importlib.invalidate_caches()
+        import importlib.util
+
+        import torch as _torch
+
+        importlib.reload(_torch)
+        torch = _torch
+
+    x = torch.randn(8, 8, device="cuda", requires_grad=True)
+    x.sum().backward()
+    torch.cuda.synchronize()
+    print("CUDA sanity check passed.")
+else:
+    print("WARNING: No GPU detected. Enable GPU in Settings → Accelerator.")
 """
     ),
     code(
@@ -127,27 +201,32 @@ print(sample['text'][:500])
     ),
     md("## 3. Fine-tune DS RAG Embedder"),
     code(
-        """from ds_rag_embedder.train import train
-from ds_rag_embedder.config import EmbedderConfig
+        """from pathlib import Path
 
-cfg = EmbedderConfig(
-    epochs=4,
-    batch_size=32,
-    output_dir=Path('models/ds-rag-embedder-v1'),
-)
-model_path = train(config=cfg)
+from ds_rag_embedder.kaggle_env import assert_gpu_ready, ensure_trained_model
+
+assert_gpu_ready()
+model_path = ensure_trained_model(Path('models/ds-rag-embedder-v1'))
 model_path
 """
     ),
     md("## 4. Benchmark: DS embedder vs generic baselines"),
     code(
-        """from ds_rag_embedder.evaluate import compare_models
+        """import gc
+import torch
+from ds_rag_embedder.evaluate import compare_models
 
-results = compare_models({
+# Evaluate one model at a time to stay within Kaggle GPU memory.
+results = {}
+for name, path in {
     'all-MiniLM-L6-v2': 'sentence-transformers/all-MiniLM-L6-v2',
     'bge-small-en-v1.5': 'BAAI/bge-small-en-v1.5',
     'ds-rag-embedder-v1': 'models/ds-rag-embedder-v1',
-}, include_categories=False)
+}.items():
+    results.update(compare_models({name: path}, include_categories=False))
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
 pd.DataFrame(results).T
 """

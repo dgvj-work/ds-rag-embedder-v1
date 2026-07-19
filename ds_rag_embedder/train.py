@@ -75,8 +75,12 @@ def train(
     corpus_path: Path | None = None,
     eval_path: Path | None = None,
     output_dir: Path | None = None,
+    *,
+    use_amp: bool = False,
+    use_evaluator: bool = True,
 ) -> Path:
     """Fine-tune base BGE model on DS/ML retrieval pairs."""
+    import torch
     from sentence_transformers import SentenceTransformer, InputExample, losses
     from sentence_transformers.evaluation import InformationRetrievalEvaluator
     from torch.utils.data import DataLoader
@@ -89,7 +93,8 @@ def train(
     eval_pairs = load_eval_pairs(eval_path)
     train_examples = build_training_examples(corpus, eval_pairs, seed=cfg.seed)
 
-    model = SentenceTransformer(cfg.base_model)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SentenceTransformer(cfg.base_model, device=device)
     model.max_seq_length = cfg.max_seq_length
 
     train_samples = [
@@ -117,26 +122,31 @@ def train(
             corpus_dict[cid] = pair["positive"]
             relevant_docs[qid] = {cid}
 
-    evaluator = InformationRetrievalEvaluator(
-        queries=queries,
-        corpus=corpus_dict,
-        relevant_docs=relevant_docs,
-        name="ds-rag-eval",
-        show_progress_bar=True,
-        query_prompt=cfg.query_prefix,
-    )
+    evaluator = None
+    if use_evaluator:
+        evaluator = InformationRetrievalEvaluator(
+            queries=queries,
+            corpus=corpus_dict,
+            relevant_docs=relevant_docs,
+            name="ds-rag-eval",
+            show_progress_bar=True,
+            query_prompt=cfg.query_prefix,
+        )
 
     warmup_steps = int(len(train_dataloader) * cfg.epochs * cfg.warmup_ratio)
-    model.fit(
-        train_objectives=[(train_dataloader, train_loss)],
-        evaluator=evaluator,
-        epochs=cfg.epochs,
-        warmup_steps=max(10, warmup_steps),
-        optimizer_params={"lr": cfg.learning_rate},
-        output_path=str(out),
-        save_best_model=True,
-        show_progress_bar=True,
-    )
+    fit_kwargs: dict = {
+        "train_objectives": [(train_dataloader, train_loss)],
+        "epochs": cfg.epochs,
+        "warmup_steps": max(10, warmup_steps),
+        "optimizer_params": {"lr": cfg.learning_rate},
+        "output_path": str(out),
+        "save_best_model": bool(use_evaluator),
+        "show_progress_bar": True,
+        "use_amp": use_amp,
+    }
+    if evaluator is not None:
+        fit_kwargs["evaluator"] = evaluator
+    model.fit(**fit_kwargs)
 
     meta = {
         "base_model": cfg.base_model,

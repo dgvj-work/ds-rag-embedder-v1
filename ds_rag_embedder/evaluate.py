@@ -177,13 +177,25 @@ def compare_models(
     include_categories: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Compare multiple embedders on the same benchmark."""
+    import gc
+
+    import torch
+
     results: dict[str, dict[str, Any]] = {}
     for name, path in model_paths.items():
         embedder = DSRAGEmbedder(model_name_or_path=path)
-        if include_categories:
-            report = evaluate_by_category(embedder, benchmark_path=benchmark_path)
-            results[name] = report.to_dict()
-        else:
-            metrics = evaluate_retrieval(embedder, benchmark_path=benchmark_path, measure_latency=True)
-            results[name] = metrics.to_dict()
+        try:
+            if include_categories:
+                report = evaluate_by_category(embedder, benchmark_path=benchmark_path)
+                results[name] = report.to_dict()
+            else:
+                metrics = evaluate_retrieval(
+                    embedder, benchmark_path=benchmark_path, measure_latency=True
+                )
+                results[name] = metrics.to_dict()
+        finally:
+            del embedder
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
     return results
